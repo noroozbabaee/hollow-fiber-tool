@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hollow Fiber Clearance — Parameter Explorer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f9; color: #222; min-height: 100vh; padding: 24px 16px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  header { background: #1e2d4a; color: #fff; border-radius: 14px 14px 0 0; padding: 20px 28px; }
+  header h1 { font-size: 22px; font-weight: 600; }
+  header p  { font-size: 13px; opacity: 0.6; margin-top: 4px; }
+  .body { background: #fff; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 14px 14px; padding: 28px; }
+  .grid2 { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 28px; }
+  @media(max-width:640px){ .grid2 { grid-template-columns: 1fr; } }
+  .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 14px; }
+  /* Geometry */
+  .geo-wrap { display: flex; gap: 12px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+  .geo-item { text-align: center; }
+  .geo-item svg { display: block; margin: 0 auto 6px; }
+  .geo-label { font-size: 12px; font-weight: 600; }
+  .tag-io { color: #0C447C; } .tag-oi { color: #BA7517; }
+  .geo-formula { font-size: 11px; color: #777; font-style: italic; }
+  /* Sliders */
+  .param { margin-bottom: 18px; }
+  .param-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .param-name { font-size: 13px; color: #444; }
+  .param-val  { font-size: 14px; font-weight: 600; color: #1e2d4a; }
+  input[type=range] { width: 100%; accent-color: #378ADD; cursor: pointer; }
+  /* Results */
+  .results { margin-top: 28px; border-top: 1px solid #eee; padding-top: 22px; }
+  .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .res-card { background: #f7f8fa; border-radius: 12px; padding: 16px; }
+  .res-pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px; margin-bottom: 10px; }
+  .pill-io { background: #E6F1FB; color: #0C447C; }
+  .pill-oi { background: #FAEEDA; color: #633806; }
+  .res-metric { font-size: 11px; color: #999; margin-bottom: 2px; }
+  .res-val    { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .val-io { color: #378ADD; } .val-oi { color: #BA7517; }
+  .bar-track { height: 10px; background: #e0e0e0; border-radius: 5px; overflow: hidden; }
+  .bar-fill  { height: 10px; border-radius: 5px; transition: width 0.35s ease; }
+  .fill-io { background: #378ADD; } .fill-oi { background: #BA7517; }
+  .sub-metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 10px; }
+  .sub-m { background: #fff; border-radius: 8px; padding: 8px 10px; border: 1px solid #eee; }
+  .sub-label { font-size: 10px; color: #aaa; }
+  .sub-val   { font-size: 13px; font-weight: 600; color: #333; }
+  /* Verdict */
+  .verdict { border-radius: 10px; padding: 14px 18px; font-size: 13px; line-height: 1.6; transition: background 0.3s; }
+  .v-oi   { background: #EAF3DE; border-left: 3px solid #1D9E75; color: #0F4D2E; }
+  .v-io   { background: #EAF1FB; border-left: 3px solid #378ADD; color: #0C3060; }
+  .v-even { background: #f7f8fa;  border-left: 3px solid #aaa;    color: #444; }
+  footer { text-align: center; font-size: 11px; color: #bbb; margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Hollow Fiber Clearance — Parameter Explorer</h1>
+    <p>Adjust parameters below to compare inside-out vs outside-in configurations. All parameters are held equal for a fair comparison.</p>
+  </header>
+  <div class="body">
+    <div class="grid2">
+
+      <!-- LEFT: Geometry -->
+      <div>
+        <div class="section-label">Geometry — cross section</div>
+        <div class="geo-wrap">
+          <div class="geo-item">
+            <svg viewBox="0 0 120 120" width="120" height="120">
+              <circle cx="60" cy="60" r="54" fill="#FAEEDA"/>
+              <circle cx="60" cy="60" r="40" fill="#FBEAF0"/>
+              <circle cx="60" cy="60" r="27" fill="#B5D4F4"/>
+              <circle cx="60" cy="60" r="13" fill="#F5C4B3"/>
+              <line x1="60" y1="60" x2="60" y2="6"  stroke="#aaa" stroke-width="1"/>
+              <text x="65" y="14" font-size="11" fill="#aaa" font-style="italic">r</text>
+              <line x1="60" y1="60" x2="114" y2="60" stroke="#aaa" stroke-width="1"/>
+              <text x="116" y="64" font-size="11" fill="#aaa" font-style="italic">z</text>
+            </svg>
+            <div class="geo-label tag-io">Inside-out</div>
+            <div class="geo-formula">A = πR²</div>
+          </div>
+          <div class="geo-item">
+            <svg viewBox="0 0 120 120" width="120" height="120">
+              <circle cx="60" cy="60" r="54" fill="#F5C4B3"/>
+              <circle cx="60" cy="60" r="40" fill="#FBEAF0"/>
+              <circle cx="60" cy="60" r="27" fill="#B5D4F4"/>
+              <circle cx="60" cy="60" r="13" fill="#FAEEDA"/>
+              <line x1="60" y1="60" x2="60" y2="6"  stroke="#aaa" stroke-width="1"/>
+              <text x="65" y="14" font-size="11" fill="#aaa" font-style="italic">r</text>
+              <line x1="60" y1="60" x2="114" y2="60" stroke="#aaa" stroke-width="1"/>
+              <text x="116" y="64" font-size="11" fill="#aaa" font-style="italic">z</text>
+            </svg>
+            <div class="geo-label tag-oi">Outside-in</div>
+            <div class="geo-formula">A = π(R²<sub>out</sub> − R²<sub>in</sub>)</div>
+          </div>
+        </div>
+        <!-- Legend -->
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap;">
+          <span style="font-size:11px;color:#555;display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;background:#F5C4B3;display:inline-block;border-radius:2px;"></span>Blood</span>
+          <span style="font-size:11px;color:#555;display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;background:#B5D4F4;display:inline-block;border-radius:2px;"></span>Membrane</span>
+          <span style="font-size:11px;color:#555;display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;background:#FBEAF0;display:inline-block;border-radius:2px;"></span>Cell layer</span>
+          <span style="font-size:11px;color:#555;display:flex;align-items:center;gap:4px;"><span style="width:12px;height:12px;background:#FAEEDA;display:inline-block;border-radius:2px;"></span>Dialysate</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Parameters -->
+      <div>
+        <div class="section-label">Adjust parameters</div>
+        <div class="param">
+          <div class="param-header">
+            <span class="param-name">Membrane area <i>A</i></span>
+            <span class="param-val"><span id="v-area">10</span> mm²</span>
+          </div>
+          <input type="range" id="s-area" min="1" max="20" value="10" step="1" oninput="calc()">
+        </div>
+        <div class="param">
+          <div class="param-header">
+            <span class="param-name">Blood flow <i>Q<sub>b</sub></i></span>
+            <span class="param-val"><span id="v-qb">6</span> mL/h</span>
+          </div>
+          <input type="range" id="s-qb" min="1" max="20" value="6" step="1" oninput="calc()">
+        </div>
+        <div class="param">
+          <div class="param-header">
+            <span class="param-name">Inlet concentration <i>C<sub>in</sub></i></span>
+            <span class="param-val"><span id="v-cin">0.10</span> mol/m³</span>
+          </div>
+          <input type="range" id="s-cin" min="0.01" max="0.50" value="0.10" step="0.01" oninput="calc()">
+        </div>
+        <div class="param">
+          <div class="param-header">
+            <span class="param-name">OAT1 activity (V<sub>max</sub> scale)</span>
+            <span class="param-val"><span id="v-oat">1.0</span>×</span>
+          </div>
+          <input type="range" id="s-oat" min="0.1" max="2.0" value="1.0" step="0.1" oninput="calc()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results">
+      <div class="section-label">Clearance comparison — CL<sub>A</sub></div>
+      <div class="res-grid">
+        <div class="res-card">
+          <span class="res-pill pill-io">Inside-out</span>
+          <div class="res-metric">CL<sub>A</sub></div>
+          <div class="res-val val-io" id="io-cl">—</div>
+          <div class="bar-track"><div class="bar-fill fill-io" id="bar-io" style="width:0%"></div></div>
+          <div class="sub-metrics">
+            <div class="sub-m"><div class="sub-label">Blood vol.</div><div class="sub-val" id="io-vol">—</div></div>
+            <div class="sub-m"><div class="sub-label">Residence τ</div><div class="sub-val" id="io-tau">—</div></div>
+            <div class="sub-m"><div class="sub-label">Geometry</div><div class="sub-val">Lumen</div></div>
+          </div>
+        </div>
+        <div class="res-card">
+          <span class="res-pill pill-oi">Outside-in</span>
+          <div class="res-metric">CL<sub>A</sub></div>
+          <div class="res-val val-oi" id="oi-cl">—</div>
+          <div class="bar-track"><div class="bar-fill fill-oi" id="bar-oi" style="width:0%"></div></div>
+          <div class="sub-metrics">
+            <div class="sub-m"><div class="sub-label">Blood vol.</div><div class="sub-val" id="oi-vol">—</div></div>
+            <div class="sub-m"><div class="sub-label">Residence τ</div><div class="sub-val" id="oi-tau">—</div></div>
+            <div class="sub-m"><div class="sub-label">Geometry</div><div class="sub-val">Shell</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+  </div>
+  <footer>Thesis tool · Baseline Clearance Fair Comparison · Inside-out vs Outside-in hollow fiber</footer>
+</div>
+
+<script>
+function calc() {
+  const A   = parseFloat(document.getElementById('s-area').value);
+  const Qb  = parseFloat(document.getElementById('s-qb').value);
+  const Cin = parseFloat(document.getElementById('s-cin').value);
+  const oat = parseFloat(document.getElementById('s-oat').value);
+
+  document.getElementById('v-area').textContent = A.toFixed(0);
+  document.getElementById('v-qb').textContent   = Qb.toFixed(0);
+  document.getElementById('v-cin').textContent  = Cin.toFixed(2);
+  document.getElementById('v-oat').textContent  = oat.toFixed(1);
+
+  const R_io = 0.1, R_in = 0.5, R_out = 1.2, L = 50;
+  const V_io = Math.PI * R_io * R_io * L;
+  const V_oi = Math.PI * (R_out * R_out - R_in * R_in) * L;
+  const tau_io = V_io / Qb;
+  const tau_oi = V_oi / Qb;
+
+  const Km = 0.05, Vmax = 0.002 * oat;
+  const Jd_io = 1.2e-4 * A * Cin;
+  const Jt_io = Vmax * Cin / (Km + Cin) * A;
+  const CL_io = ((Jd_io + Jt_io) / Cin) * (1 + 0.30 * Math.log(1 + tau_io));
+
+  const cf = 1.6;
+  const Jd_oi = 1.2e-4 * A * Cin * cf;
+  const Jt_oi = Vmax * Cin / (Km + Cin) * A * cf;
+  const CL_oi = ((Jd_oi + Jt_oi) / Cin) * (1 + 0.15 * Math.log(1 + tau_oi));
+
+  document.getElementById('io-cl').textContent  = CL_io.toFixed(4);
+  document.getElementById('oi-cl').textContent  = CL_oi.toFixed(4);
+  document.getElementById('io-vol').textContent = V_io.toFixed(2);
+  document.getElementById('oi-vol').textContent = V_oi.toFixed(1);
+  document.getElementById('io-tau').textContent = tau_io.toFixed(2) + ' h';
+  document.getElementById('oi-tau').textContent = tau_oi.toFixed(1) + ' h';
+
+  const mx = Math.max(CL_io, CL_oi);
+  document.getElementById('bar-io').style.width = (CL_io / mx * 100).toFixed(1) + '%';
+  document.getElementById('bar-oi').style.width = (CL_oi / mx * 100).toFixed(1) + '%';
+
+  const ratio = CL_oi / CL_io;
+  const vd = document.getElementById('verdict');
+  if (ratio > 1.15) {
+    vd.className = 'verdict v-oi';
+    vd.innerHTML = '<strong>Outside-in is more efficient</strong> — CL<sub>A</sub> is ' + ratio.toFixed(2) + '× higher. The larger blood–membrane contact area boosts both diffusion and OAT1-mediated transport, outweighing the dilution penalty of the larger blood volume.';
+  } else if (ratio < 0.85) {
+    vd.className = 'verdict v-io';
+    vd.innerHTML = '<strong>Inside-out performs better</strong> at these parameters. The short diffusion path in the lumen is more efficient than the outside-in contact area advantage.';
+  } else {
+    vd.className = 'verdict v-even';
+    vd.innerHTML = '<strong>Performance is comparable</strong> (ratio ' + ratio.toFixed(2) + '). The geometry differences largely cancel out — neither design has a strong advantage under these conditions.';
+  }
+}
+calc();
+</script>
+</body>
+</html>
