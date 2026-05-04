@@ -1,156 +1,245 @@
-(function() {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hollow Fiber Clearance Explorer</title>
 
-  const L = 50;
-  const R_lumen = 0.12;
+<style>
+body {
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background:#f0f2f5;
+}
 
-  const Km = 0.05;
-  const BASE_Vmax = 0.0025;
-  const DIFFUSION_COEFF = 1.2e-4;
+.container {
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
 
-  const areaSlider = document.getElementById('areaSlider');
-  const qbSlider = document.getElementById('qbSlider');
-  const cinSlider = document.getElementById('cinSlider');
-  const oatSlider = document.getElementById('oatSlider');
+.header {
+  background:#1a3a5c;
+  color:white;
+  padding:20px;
+  border-radius:15px 15px 0 0;
+}
 
-  const ioCLspan = document.getElementById('ioCL');
-  const oiCLspan = document.getElementById('oiCL');
-  const ioVolSpan = document.getElementById('ioVol');
-  const oiVolSpan = document.getElementById('oiVol');
-  const ioTauSpan = document.getElementById('ioTau');
-  const oiTauSpan = document.getElementById('oiTau');
-  const ioBar = document.getElementById('ioBar');
-  const oiBar = document.getElementById('oiBar');
-  const verdictDiv = document.getElementById('verdict');
+.card {
+  background:white;
+  padding:25px;
+  border-radius:0 0 15px 15px;
+}
 
-  const svgIO = document.querySelectorAll("svg")[0];
-  const svgOI = document.querySelectorAll("svg")[1];
+.two-columns {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:25px;
+}
 
-  // =========================
-  // DRAW FUNCTIONS
-  // =========================
+svg {
+  background:#fafbfc;
+  border-radius:12px;
+}
 
-  function drawInsideOut() {
-    svgIO.innerHTML = "";
+.result-number {
+  font-size:1.6rem;
+  font-weight:bold;
+}
 
-    const cx = 55;
-    const cy = 55;
-    const scale = 300;
+.progress-bar {
+  height:6px;
+  background:#ddd;
+  border-radius:6px;
+}
 
-    function circle(r, color) {
-      const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      c.setAttribute("cx", cx);
-      c.setAttribute("cy", cy);
-      c.setAttribute("r", r * scale);
-      c.setAttribute("fill", color);
-      svgIO.appendChild(c);
-    }
+.progress-fill {
+  height:100%;
+  background:#2c7ab1;
+}
+</style>
+</head>
 
-    circle(R_lumen + 0.25, "#FAEEDA"); // dialysate
-    circle(R_lumen + 0.18, "#FBEAF0"); // cell
-    circle(R_lumen + 0.12, "#B5D4F4"); // membrane
-    circle(R_lumen, "#F5C4B3"); // blood
+<body>
+
+<div class="container">
+
+<div class="header">
+  <h2>🧬 Hollow Fiber Clearance Explorer</h2>
+</div>
+
+<div class="card">
+
+<div class="two-columns">
+
+<!-- LEFT -->
+<div>
+
+<h4>Geometry</h4>
+
+<svg id="svgIO" width="140" height="140"></svg>
+<p><b>Inside-Out (fixed)</b></p>
+
+<svg id="svgOI" width="140" height="140"></svg>
+<p><b>Outside-In (design)</b></p>
+
+</div>
+
+<!-- RIGHT -->
+<div>
+
+<h4>Controls</h4>
+
+Membrane area
+<input type="range" id="areaSlider" min="2" max="25" step="0.5" value="10">
+
+Blood flow
+<input type="range" id="qbSlider" min="1" max="25" value="6">
+
+Concentration
+<input type="range" id="cinSlider" min="0.01" max="0.5" step="0.01" value="0.1">
+
+OAT1 activity
+<input type="range" id="oatSlider" min="0.2" max="2.5" step="0.1" value="1">
+
+</div>
+
+</div>
+
+<hr>
+
+<h4>Results</h4>
+
+Inside-Out: <span id="ioCL"></span><br>
+Outside-In: <span id="oiCL"></span>
+
+<div class="progress-bar">
+  <div id="ioBar" class="progress-fill"></div>
+</div>
+
+<div class="progress-bar">
+  <div id="oiBar" class="progress-fill" style="background:#c97e2a"></div>
+</div>
+
+<p id="verdict"></p>
+
+</div>
+</div>
+
+<script>
+(function(){
+
+const R_lumen = 0.12;
+const L = 50;
+
+const Km = 0.05;
+const BASE_Vmax = 0.0025;
+
+const areaSlider = document.getElementById('areaSlider');
+const qbSlider = document.getElementById('qbSlider');
+const cinSlider = document.getElementById('cinSlider');
+const oatSlider = document.getElementById('oatSlider');
+
+const svgIO = document.getElementById('svgIO');
+const svgOI = document.getElementById('svgOI');
+
+function drawInsideOut(){
+  svgIO.innerHTML="";
+  const cx=70, cy=70;
+  const scale=300;
+
+  function c(r,color){
+    let el=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    el.setAttribute("cx",cx);
+    el.setAttribute("cy",cy);
+    el.setAttribute("r",r*scale);
+    el.setAttribute("fill",color);
+    svgIO.appendChild(el);
   }
 
-  function drawOutsideIn(A_mem) {
-    svgOI.innerHTML = "";
+  c(R_lumen+0.25,"#FAEEDA");
+  c(R_lumen+0.18,"#FBEAF0");
+  c(R_lumen+0.12,"#B5D4F4");
+  c(R_lumen,"#F5C4B3");
+}
 
-    const cx = 55;
-    const cy = 55;
+function drawOutsideIn(A){
+  svgOI.innerHTML="";
+  const cx=70, cy=70;
 
-    // convert area → radii (simple mapping)
-    const Rin = 0.4;
-    const Rout = Math.sqrt(A_mem / Math.PI + Rin * Rin);
+  const Rin=0.4;
+  const Rout=Math.sqrt(A/Math.PI + Rin*Rin);
 
-    const scale = 80;
+  const scale=80;
 
-    function circle(r, color) {
-      const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      c.setAttribute("cx", cx);
-      c.setAttribute("cy", cy);
-      c.setAttribute("r", r * scale);
-      c.setAttribute("fill", color);
-      svgOI.appendChild(c);
-    }
-
-    // OUTSIDE → INSIDE
-    circle(Rout, "#F5C4B3"); // blood
-    circle(Rin, "#ffffff"); // hollow
-
-    circle(Rin - 0.08, "#B5D4F4"); // membrane
-    circle(Rin - 0.15, "#FBEAF0"); // cell
-    circle(Rin - 0.25, "#FAEEDA"); // dialysate
+  function c(r,color){
+    let el=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    el.setAttribute("cx",cx);
+    el.setAttribute("cy",cy);
+    el.setAttribute("r",r*scale);
+    el.setAttribute("fill",color);
+    svgOI.appendChild(el);
   }
 
-  // =========================
-  // MODEL UPDATE
-  // =========================
+  c(Rout,"#F5C4B3");
+  c(Rin,"white");
+  c(Rin-0.08,"#B5D4F4");
+  c(Rin-0.15,"#FBEAF0");
+  c(Rin-0.25,"#FAEEDA");
+}
 
-  function update() {
+function update(){
 
-    const A_mem = parseFloat(areaSlider.value);
-    const Qb = parseFloat(qbSlider.value);
-    const Cin = parseFloat(cinSlider.value);
-    const oat = parseFloat(oatSlider.value);
+  const A=parseFloat(areaSlider.value);
+  const Q=parseFloat(qbSlider.value);
+  const Cin=parseFloat(cinSlider.value);
+  const oat=parseFloat(oatSlider.value);
 
-    // volumes
-    const A_lumen = Math.PI * R_lumen * R_lumen;
-    const A_shell = A_mem;
+  const A_lumen=Math.PI*R_lumen*R_lumen;
+  const V_io=A_lumen*L;
+  const V_oi=A*L;
 
-    const V_io = A_lumen * L;
-    const V_oi = A_shell * L;
+  const tau_io=(V_io/1000)/Q;
+  const tau_oi=(V_oi/1000)/Q;
 
-    const tau_io = (V_io / 1000) / Qb;
-    const tau_oi = (V_oi / 1000) / Qb;
+  const Vmax_io=BASE_Vmax*oat*A;
+  const Vmax_oi=BASE_Vmax*oat*A*1.2;
 
-    ioVolSpan.textContent = V_io.toFixed(1) + ' µL';
-    oiVolSpan.textContent = V_oi.toFixed(1) + ' µL';
+  const J_io=(Vmax_io*Cin)/(Km+Cin);
+  const J_oi=(Vmax_oi*Cin)/(Km+Cin);
 
-    ioTauSpan.textContent = (tau_io * 60).toFixed(1) + ' min';
-    oiTauSpan.textContent = (tau_oi * 60).toFixed(1) + ' min';
+  const CL_io=(J_io/Cin)*(1+0.25*Math.log(1+tau_io));
+  const CL_oi=(J_oi/Cin)*(1+0.2*Math.log(1+tau_oi));
 
-    // kinetics
-    const Vmax_io = BASE_Vmax * oat * A_mem;
-    const Vmax_oi = BASE_Vmax * oat * A_mem * 1.2;
+  const io=CL_io/60;
+  const oi=CL_oi/60;
 
-    const J_io = (Vmax_io * Cin) / (Km + Cin);
-    const J_oi = (Vmax_oi * Cin) / (Km + Cin);
+  document.getElementById("ioCL").innerText=io.toFixed(5);
+  document.getElementById("oiCL").innerText=oi.toFixed(5);
 
-    const CL_io = (J_io / Cin) * (1 + 0.25 * Math.log(1 + tau_io));
-    const CL_oi = (J_oi / Cin) * (1 + 0.20 * Math.log(1 + tau_oi));
+  const max=Math.max(io,oi,1e-6);
+  document.getElementById("ioBar").style.width=(io/max*100)+"%";
+  document.getElementById("oiBar").style.width=(oi/max*100)+"%";
 
-    const CL_io_m = CL_io / 60;
-    const CL_oi_m = CL_oi / 60;
+  const ratio=oi/io;
+  document.getElementById("verdict").innerText=
+    ratio>1.2?"Outside-in better":
+    ratio<0.8?"Inside-out better":
+    "Comparable";
 
-    ioCLspan.textContent = CL_io_m.toFixed(5);
-    oiCLspan.textContent = CL_oi_m.toFixed(5);
+  drawInsideOut();
+  drawOutsideIn(A);
+}
 
-    const max = Math.max(CL_io_m, CL_oi_m, 1e-6);
-    ioBar.style.width = (CL_io_m / max * 100) + "%";
-    oiBar.style.width = (CL_oi_m / max * 100) + "%";
+areaSlider.oninput=update;
+qbSlider.oninput=update;
+cinSlider.oninput=update;
+oatSlider.oninput=update;
 
-    const ratio = CL_oi_m / CL_io_m;
-
-    if (ratio > 1.2) {
-      verdictDiv.className = 'verdict verdict-oi';
-      verdictDiv.innerHTML = "Outside-in better (geometry-driven)";
-    } else if (ratio < 0.8) {
-      verdictDiv.className = 'verdict verdict-io';
-      verdictDiv.innerHTML = "Inside-out better (short path advantage)";
-    } else {
-      verdictDiv.className = 'verdict verdict-equal';
-      verdictDiv.innerHTML = "Comparable performance";
-    }
-
-    // 🔥 DRAW HERE
-    drawInsideOut();
-    drawOutsideIn(A_mem);
-  }
-
-  areaSlider.addEventListener('input', update);
-  qbSlider.addEventListener('input', update);
-  cinSlider.addEventListener('input', update);
-  oatSlider.addEventListener('input', update);
-
-  update();
+update();
 
 })();
+</script>
+
+</body>
+</html>
