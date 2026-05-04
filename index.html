@@ -3,243 +3,718 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hollow Fiber Clearance Explorer</title>
-
+<title>Hollow Fiber Clearance — Scientific Comparison Tool</title>
 <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background:#f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 24px;
 }
 
 .container {
-  max-width:1100px;
-  margin:auto;
-  padding:20px;
+  max-width: 1300px;
+  margin: 0 auto;
 }
 
+/* Main card */
+.main-card {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+/* Header */
 .header {
-  background:#1a3a5c;
-  color:white;
-  padding:20px;
-  border-radius:15px 15px 0 0;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  color: white;
+  padding: 32px;
 }
 
-.card {
-  background:white;
-  padding:25px;
-  border-radius:0 0 15px 15px;
+.header h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
 }
 
-.two-columns {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:25px;
+.header p {
+  opacity: 0.9;
+  font-size: 0.95rem;
 }
 
-svg {
-  background:#fafbfc;
-  border-radius:12px;
+/* Content */
+.content {
+  padding: 32px;
 }
 
-.result-number {
-  font-size:1.6rem;
-  font-weight:bold;
+/* Two column layout */
+.grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
 }
 
-.progress-bar {
-  height:6px;
-  background:#ddd;
-  border-radius:6px;
+@media (max-width: 800px) {
+  .grid-2col {
+    grid-template-columns: 1fr;
+  }
 }
 
-.progress-fill {
-  height:100%;
-  background:#2c7ab1;
+/* Geometry panel */
+.geo-panel {
+  background: #f8f9fc;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.geo-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-io {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.badge-oi {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.fiber-svg {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid #e0e7ff;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 4px;
+}
+
+/* Controls panel */
+.controls-panel {
+  background: #f8f9fc;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.control-group {
+  margin-bottom: 24px;
+}
+
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #334155;
+}
+
+.control-value {
+  color: #667eea;
+  font-weight: 700;
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e2e8f0;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+}
+
+.unit {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+/* Results section */
+.results-section {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.results-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #1e293b;
+}
+
+.results-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.result-card {
+  background: linear-gradient(135deg, #f8f9fc 0%, #ffffff 100%);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.result-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.clearance-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 12px 0;
+}
+
+.clearance-value.io {
+  color: #1976d2;
+}
+
+.clearance-value.oi {
+  color: #f57c00;
+}
+
+.bar-container {
+  background: #e2e8f0;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.bar-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.bar-fill.io {
+  background: linear-gradient(90deg, #1976d2, #42a5f5);
+}
+
+.bar-fill.oi {
+  background: linear-gradient(90deg, #f57c00, #ffb74d);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.85rem;
+}
+
+.detail-label {
+  color: #64748b;
+}
+
+.detail-value {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Verdict */
+.verdict {
+  padding: 20px;
+  border-radius: 16px;
+  margin-top: 24px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.verdict-io {
+  background: #e3f2fd;
+  color: #0d47a1;
+  border-left: 4px solid #1976d2;
+}
+
+.verdict-oi {
+  background: #fff3e0;
+  color: #e65100;
+  border-left: 4px solid #f57c00;
+}
+
+.verdict-equal {
+  background: #f1f5f9;
+  color: #475569;
+  border-left: 4px solid #94a3b8;
+}
+
+.footer {
+  margin-top: 32px;
+  padding: 20px;
+  background: #f8f9fc;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #64748b;
 }
 </style>
 </head>
-
 <body>
 
 <div class="container">
+  <div class="main-card">
+    <div class="header">
+      <h1>🧬 Hollow Fiber Clearance Explorer</h1>
+      <p>Scientific comparison of Inside-Out vs Outside-In hollow fiber bioreactor configurations</p>
+    </div>
 
-<div class="header">
-  <h2>🧬 Hollow Fiber Clearance Explorer</h2>
-</div>
+    <div class="content">
+      <div class="grid-2col">
+        <!-- LEFT: Geometry -->
+        <div class="geo-panel">
+          <div class="geo-title">
+            <span>📐 Cross-Sectional Geometry</span>
+          </div>
+          
+          <div id="io-geo" style="margin-bottom: 32px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span class="badge badge-io">⬇️ Inside-Out</span>
+              <span style="font-size: 0.75rem; color: #64748b;">Blood flows through lumen</span>
+            </div>
+            <div class="fiber-svg" id="io-svg-container"></div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">Lumen Radius</div>
+                <div class="stat-value" id="io-radius">0.12 mm</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Cross-Section Area</div>
+                <div class="stat-value" id="io-area">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Blood Volume</div>
+                <div class="stat-value" id="io-volume">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Membrane Area</div>
+                <div class="stat-value" id="io-mem-area">—</div>
+              </div>
+            </div>
+          </div>
 
-<div class="card">
+          <div id="oi-geo">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span class="badge badge-oi">⬆️ Outside-In</span>
+              <span style="font-size: 0.75rem; color: #64748b;">Blood flows through annulus</span>
+            </div>
+            <div class="fiber-svg" id="oi-svg-container"></div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">Inner Radius</div>
+                <div class="stat-value" id="oi-rin">0.40 mm</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Outer Radius</div>
+                <div class="stat-value" id="oi-rout">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Annular Area</div>
+                <div class="stat-value" id="oi-area">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Blood Volume</div>
+                <div class="stat-value" id="oi-volume">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-<div class="two-columns">
+        <!-- RIGHT: Controls -->
+        <div class="controls-panel">
+          <div class="geo-title">
+            <span>🎮 Parameters</span>
+          </div>
 
-<!-- LEFT -->
-<div>
+          <div class="control-group">
+            <div class="control-label">
+              <span>🔬 Membrane Area</span>
+              <span class="control-value" id="area-val">10.0</span>
+            </div>
+            <input type="range" id="area-slider" min="2" max="25" step="0.5" value="10">
+            <div class="unit">mm² · Effective transport surface area</div>
+          </div>
 
-<h4>Geometry</h4>
+          <div class="control-group">
+            <div class="control-label">
+              <span>💧 Blood Flow Rate</span>
+              <span class="control-value" id="qb-val">6.0</span>
+            </div>
+            <input type="range" id="qb-slider" min="1" max="25" step="0.5" value="6">
+            <div class="unit">mL/h · Flow through the fiber</div>
+          </div>
 
-<svg id="svgIO" width="140" height="140"></svg>
-<p><b>Inside-Out (fixed)</b></p>
+          <div class="control-group">
+            <div class="control-label">
+              <span>🧪 Inlet Concentration</span>
+              <span class="control-value" id="cin-val">0.10</span>
+            </div>
+            <input type="range" id="cin-slider" min="0.01" max="0.5" step="0.01" value="0.10">
+            <div class="unit">mM · Solute concentration at inlet</div>
+          </div>
 
-<svg id="svgOI" width="140" height="140"></svg>
-<p><b>Outside-In (design)</b></p>
+          <div class="control-group">
+            <div class="control-label">
+              <span>⚡ OAT1 Activity</span>
+              <span class="control-value" id="oat-val">1.00</span>
+            </div>
+            <input type="range" id="oat-slider" min="0.2" max="2.5" step="0.05" value="1.0">
+            <div class="unit">× baseline · Transporter activity scaling</div>
+          </div>
 
-</div>
+          <div class="control-group">
+            <div class="control-label">
+              <span>📏 Fiber Length</span>
+              <span class="control-value">50</span>
+            </div>
+            <div class="unit">mm (fixed for both configurations)</div>
+          </div>
+        </div>
+      </div>
 
-<!-- RIGHT -->
-<div>
+      <!-- RESULTS -->
+      <div class="results-section">
+        <div class="results-title">📊 Clearance Analysis</div>
+        
+        <div class="results-compare">
+          <div class="result-card">
+            <div class="result-header">
+              <h3>Inside-Out Configuration</h3>
+              <span class="badge badge-io">Lumen flow</span>
+            </div>
+            <div class="clearance-value io" id="io-cl">—</div>
+            <div class="bar-container">
+              <div class="bar-fill io" id="io-bar" style="width: 0%"></div>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Residence time</span>
+              <span class="detail-value" id="io-tau">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Uptake flux</span>
+              <span class="detail-value" id="io-flux">—</span>
+            </div>
+          </div>
 
-<h4>Controls</h4>
+          <div class="result-card">
+            <div class="result-header">
+              <h3>Outside-In Configuration</h3>
+              <span class="badge badge-oi">Annular flow</span>
+            </div>
+            <div class="clearance-value oi" id="oi-cl">—</div>
+            <div class="bar-container">
+              <div class="bar-fill oi" id="oi-bar" style="width: 0%"></div>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Residence time</span>
+              <span class="detail-value" id="oi-tau">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Uptake flux</span>
+              <span class="detail-value" id="oi-flux">—</span>
+            </div>
+          </div>
+        </div>
 
-Membrane area
-<input type="range" id="areaSlider" min="2" max="25" step="0.5" value="10">
+        <div id="verdict" class="verdict verdict-equal">
+          Adjust parameters to compare clearance efficiency
+        </div>
+      </div>
 
-Blood flow
-<input type="range" id="qbSlider" min="1" max="25" value="6">
-
-Concentration
-<input type="range" id="cinSlider" min="0.01" max="0.5" step="0.01" value="0.1">
-
-OAT1 activity
-<input type="range" id="oatSlider" min="0.2" max="2.5" step="0.1" value="1">
-
-</div>
-
-</div>
-
-<hr>
-
-<h4>Results</h4>
-
-Inside-Out: <span id="ioCL"></span><br>
-Outside-In: <span id="oiCL"></span>
-
-<div class="progress-bar">
-  <div id="ioBar" class="progress-fill"></div>
-</div>
-
-<div class="progress-bar">
-  <div id="oiBar" class="progress-fill" style="background:#c97e2a"></div>
-</div>
-
-<p id="verdict"></p>
-
-</div>
+      <div class="footer">
+        <strong>Model details:</strong> Michaelis-Menten kinetics (Km = 0.05 mM) | Diffusion coefficient = 1.2e-4 mL·mm⁻²·h⁻¹ | Outside-In includes 20-30% enhanced transport due to membrane geometry<br>
+        Fiber length = 50 mm | Inside-Out lumen radius fixed at 0.12 mm | Outside-In annulus: Rin = 0.40 mm, Rout adjusts with membrane area
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-(function(){
-
-const R_lumen = 0.12;
-const L = 50;
-
-const Km = 0.05;
-const BASE_Vmax = 0.0025;
-
-const areaSlider = document.getElementById('areaSlider');
-const qbSlider = document.getElementById('qbSlider');
-const cinSlider = document.getElementById('cinSlider');
-const oatSlider = document.getElementById('oatSlider');
-
-const svgIO = document.getElementById('svgIO');
-const svgOI = document.getElementById('svgOI');
-
-function drawInsideOut(){
-  svgIO.innerHTML="";
-  const cx=70, cy=70;
-  const scale=300;
-
-  function c(r,color){
-    let el=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    el.setAttribute("cx",cx);
-    el.setAttribute("cy",cy);
-    el.setAttribute("r",r*scale);
-    el.setAttribute("fill",color);
-    svgIO.appendChild(el);
+(function() {
+  // Fixed geometry parameters
+  const L = 50;                    // mm fiber length
+  const R_lumen = 0.12;            // mm inside-out lumen radius
+  const Rin_annulus = 0.40;        // mm outside-in inner radius (fixed)
+  
+  // Constants
+  const Km = 0.05;                 // mM Michaelis constant
+  const BASE_Vmax = 0.0025;        // mmol/(h·mm²)
+  const DIFFUSION = 1.2e-4;        // mL/(h·mm²) diffusive clearance coefficient
+  
+  // DOM elements
+  const areaSlider = document.getElementById('area-slider');
+  const qbSlider = document.getElementById('qb-slider');
+  const cinSlider = document.getElementById('cin-slider');
+  const oatSlider = document.getElementById('oat-slider');
+  
+  function drawFiber(svgId, type, R_inner, R_outer, area_mm2) {
+    const container = document.getElementById(svgId);
+    if (!container) return;
+    
+    const size = 140;
+    const center = size / 2;
+    const scale = 90 / R_outer;
+    
+    let svg = container.querySelector('svg');
+    if (!svg) {
+      svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', size);
+      svg.setAttribute('height', size);
+      svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+      container.innerHTML = '';
+      container.appendChild(svg);
+    }
+    svg.innerHTML = '';
+    
+    if (type === 'io') {
+      // Inside-out: blood in center
+      const r_lumen = Math.min(R_inner * scale, 65);
+      const r_membrane = r_lumen * 1.3;
+      const r_cell = r_lumen * 1.6;
+      const r_shell = r_lumen * 2.0;
+      
+      this.drawCircle(svg, center, center, r_shell, '#FAEEDA');
+      this.drawCircle(svg, center, center, r_cell, '#FBEAF0');
+      this.drawCircle(svg, center, center, r_membrane, '#B5D4F4');
+      this.drawCircle(svg, center, center, r_lumen, '#F5C4B3');
+      
+      // Label
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', center);
+      text.setAttribute('y', center + 3);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('font-size', '10');
+      text.setAttribute('fill', '#5a3a2a');
+      text.textContent = 'blood';
+      svg.appendChild(text);
+    } else {
+      // Outside-in: annulus is blood
+      const r_outer = Math.min(R_outer * scale, 65);
+      const r_inner = R_inner * scale;
+      const r_membrane = r_inner * 0.85;
+      const r_cell = r_inner * 0.7;
+      const r_lumen = r_inner * 0.55;
+      
+      this.drawCircle(svg, center, center, r_outer, '#F5C4B3');  // blood in annulus
+      this.drawCircle(svg, center, center, r_inner, '#FAEEDA');  // shell
+      this.drawCircle(svg, center, center, r_membrane, '#B5D4F4'); // membrane
+      this.drawCircle(svg, center, center, r_cell, '#FBEAF0');    // cell
+      this.drawCircle(svg, center, center, r_lumen, '#ffffff');    // hollow center
+      
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', center);
+      text.setAttribute('y', center - 5);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('font-size', '8');
+      text.setAttribute('fill', '#5a3a2a');
+      text.textContent = 'blood';
+      svg.appendChild(text);
+      
+      const text2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text2.setAttribute('x', center);
+      text2.setAttribute('y', center + 8);
+      text2.setAttribute('text-anchor', 'middle');
+      text2.setAttribute('font-size', '7');
+      text2.setAttribute('fill', '#999');
+      text2.textContent = '(annulus)';
+      svg.appendChild(text2);
+    }
   }
-
-  c(R_lumen+0.25,"#FAEEDA");
-  c(R_lumen+0.18,"#FBEAF0");
-  c(R_lumen+0.12,"#B5D4F4");
-  c(R_lumen,"#F5C4B3");
-}
-
-function drawOutsideIn(A){
-  svgOI.innerHTML="";
-  const cx=70, cy=70;
-
-  const Rin=0.4;
-  const Rout=Math.sqrt(A/Math.PI + Rin*Rin);
-
-  const scale=80;
-
-  function c(r,color){
-    let el=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    el.setAttribute("cx",cx);
-    el.setAttribute("cy",cy);
-    el.setAttribute("r",r*scale);
-    el.setAttribute("fill",color);
-    svgOI.appendChild(el);
+  
+  // Helper to draw circle
+  function drawCircle(svg, cx, cy, r, fill) {
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', Math.max(1, r));
+    circle.setAttribute('fill', fill);
+    circle.setAttribute('stroke', '#ddd');
+    circle.setAttribute('stroke-width', '0.5');
+    svg.appendChild(circle);
   }
-
-  c(Rout,"#F5C4B3");
-  c(Rin,"white");
-  c(Rin-0.08,"#B5D4F4");
-  c(Rin-0.15,"#FBEAF0");
-  c(Rin-0.25,"#FAEEDA");
-}
-
-function update(){
-
-  const A=parseFloat(areaSlider.value);
-  const Q=parseFloat(qbSlider.value);
-  const Cin=parseFloat(cinSlider.value);
-  const oat=parseFloat(oatSlider.value);
-
-  const A_lumen=Math.PI*R_lumen*R_lumen;
-  const V_io=A_lumen*L;
-  const V_oi=A*L;
-
-  const tau_io=(V_io/1000)/Q;
-  const tau_oi=(V_oi/1000)/Q;
-
-  const Vmax_io=BASE_Vmax*oat*A;
-  const Vmax_oi=BASE_Vmax*oat*A*1.2;
-
-  const J_io=(Vmax_io*Cin)/(Km+Cin);
-  const J_oi=(Vmax_oi*Cin)/(Km+Cin);
-
-  const CL_io=(J_io/Cin)*(1+0.25*Math.log(1+tau_io));
-  const CL_oi=(J_oi/Cin)*(1+0.2*Math.log(1+tau_oi));
-
-  const io=CL_io/60;
-  const oi=CL_oi/60;
-
-  document.getElementById("ioCL").innerText=io.toFixed(5);
-  document.getElementById("oiCL").innerText=oi.toFixed(5);
-
-  const max=Math.max(io,oi,1e-6);
-  document.getElementById("ioBar").style.width=(io/max*100)+"%";
-  document.getElementById("oiBar").style.width=(oi/max*100)+"%";
-
-  const ratio=oi/io;
-  document.getElementById("verdict").innerText=
-    ratio>1.2?"Outside-in better":
-    ratio<0.8?"Inside-out better":
-    "Comparable";
-
-  drawInsideOut();
-  drawOutsideIn(A);
-}
-
-areaSlider.oninput=update;
-qbSlider.oninput=update;
-cinSlider.oninput=update;
-oatSlider.oninput=update;
-
-update();
-
+  
+  // Bind methods
+  drawFiber.prototype.drawCircle = drawCircle;
+  
+  function update() {
+    // Get values
+    const A_mem = parseFloat(areaSlider.value);
+    const Qb = parseFloat(qbSlider.value);
+    const Cin = parseFloat(cinSlider.value);
+    const oat = parseFloat(oatSlider.value);
+    
+    // Update displays
+    document.getElementById('area-val').textContent = A_mem.toFixed(1);
+    document.getElementById('qb-val').textContent = Qb.toFixed(1);
+    document.getElementById('cin-val').textContent = Cin.toFixed(2);
+    document.getElementById('oat-val').textContent = oat.toFixed(2);
+    
+    // Calculate volumes (mm³ = µL)
+    const A_lumen = Math.PI * R_lumen * R_lumen;
+    const V_io = A_lumen * L;
+    
+    // For outside-in, calculate annular area from membrane area (empirical relationship)
+    // Real annular area is roughly proportional to membrane area
+    const annulus_area_factor = 0.35;
+    const A_annulus = A_mem * annulus_area_factor;
+    const V_oi = A_annulus * L;
+    
+    // Calculate outer radius for visualization
+    const Rout_annulus = Math.sqrt(A_annulus / Math.PI + Rin_annulus * Rin_annulus);
+    
+    // Update geometry displays
+    document.getElementById('io-area').textContent = A_lumen.toFixed(4) + ' mm²';
+    document.getElementById('io-volume').textContent = V_io.toFixed(1) + ' µL';
+    document.getElementById('io-mem-area').textContent = A_mem.toFixed(1) + ' mm²';
+    
+    document.getElementById('oi-rout').textContent = Rout_annulus.toFixed(3) + ' mm';
+    document.getElementById('oi-area').textContent = A_annulus.toFixed(4) + ' mm²';
+    document.getElementById('oi-volume').textContent = V_oi.toFixed(1) + ' µL';
+    
+    // Residence time (hours)
+    const tau_io = (V_io / 1000) / Qb;
+    const tau_oi = (V_oi / 1000) / Qb;
+    
+    document.getElementById('io-tau').innerHTML = formatTime(tau_io);
+    document.getElementById('oi-tau').innerHTML = formatTime(tau_oi);
+    
+    // Clearance calculation
+    const Vmax_io = BASE_Vmax * oat * A_mem;
+    const Vmax_oi = BASE_Vmax * oat * A_mem * 1.25; // Enhanced for outside-in
+    
+    const J_io = (Vmax_io * Cin) / (Km + Cin);
+    const J_oi = (Vmax_oi * Cin) / (Km + Cin);
+    
+    document.getElementById('io-flux').innerHTML = J_io.toFixed(5) + ' mmol/h';
+    document.getElementById('oi-flux').innerHTML = J_oi.toFixed(5) + ' mmol/h';
+    
+    // Diffusive clearance
+    const CL_diff_io = DIFFUSION * A_mem;
+    const CL_diff_oi = DIFFUSION * A_mem * 1.3;
+    
+    const CL_uptake_io = J_io / Cin;
+    const CL_uptake_oi = J_oi / Cin;
+    
+    let CL_io = (CL_diff_io + CL_uptake_io);
+    let CL_oi = (CL_diff_oi + CL_uptake_oi);
+    
+    // Residence time modulation
+    CL_io *= (1 + 0.25 * Math.log(1 + tau_io * 2));
+    CL_oi *= (1 + 0.22 * Math.log(1 + tau_oi * 1.8));
+    
+    // Convert to mL/min
+    const CL_io_mLmin = CL_io / 60;
+    const CL_oi_mLmin = CL_oi / 60;
+    
+    document.getElementById('io-cl').innerHTML = CL_io_mLmin.toFixed(5) + ' mL/min';
+    document.getElementById('oi-cl').innerHTML = CL_oi_mLmin.toFixed(5) + ' mL/min';
+    
+    // Update bars
+    const maxCL = Math.max(CL_io_mLmin, CL_oi_mLmin, 0.0001);
+    document.getElementById('io-bar').style.width = (CL_io_mLmin / maxCL * 100) + '%';
+    document.getElementById('oi-bar').style.width = (CL_oi_mLmin / maxCL * 100) + '%';
+    
+    // Verdict
+    const ratio = CL_oi_mLmin / CL_io_mLmin;
+    const verdictDiv = document.getElementById('verdict');
+    
+    if (ratio > 1.2) {
+      verdictDiv.className = 'verdict verdict-oi';
+      verdictDiv.innerHTML = `🎯 <strong>Outside-In is superior</strong> — ${ratio.toFixed(2)}× higher clearance. The annular geometry provides enhanced contact with the membrane, improving both diffusion and active transport despite larger blood volume.`;
+    } else if (ratio < 0.8) {
+      verdictDiv.className = 'verdict verdict-io';
+      verdictDiv.innerHTML = `💎 <strong>Inside-Out is superior</strong> — ${(1/ratio).toFixed(2)}× higher clearance. The shorter diffusion distance and smaller blood volume lead to more efficient solute removal.`;
+    } else {
+      verdictDiv.className = 'verdict verdict-equal';
+      verdictDiv.innerHTML = `⚖️ <strong>Comparable performance</strong> (ratio ${ratio.toFixed(2)}). Both configurations perform similarly — choice should be based on practical constraints like fiber packing density and manufacturing ease.`;
+    }
+    
+    // Draw SVGs
+    const drawHelper = new drawFiber();
+    drawHelper.drawCircle = drawCircle;
+    drawHelper.drawFiber('io-svg-container', 'io', R_lumen, R_lumen * 2.2, A_mem);
+    drawHelper.drawFiber('oi-svg-container', 'oi', Rin_annulus, Rout_annulus, A_mem);
+  }
+  
+  function formatTime(hours) {
+    if (hours < 0.1) return (hours * 60).toFixed(1) + ' min';
+    if (hours < 2) return (hours * 60).toFixed(0) + ' min';
+    return hours.toFixed(2) + ' h';
+  }
+  
+  // Event listeners
+  areaSlider.addEventListener('input', update);
+  qbSlider.addEventListener('input', update);
+  cinSlider.addEventListener('input', update);
+  oatSlider.addEventListener('input', update);
+  
+  // Initial update
+  update();
 })();
 </script>
-
 </body>
 </html>
