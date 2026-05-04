@@ -3,400 +3,270 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hollow Fiber Bioreactor · Inside-Out vs Outside-In</title>
+<title>Hollow Fiber Comparison</title>
+
 <style>
-* {
-  box-sizing: border-box;
+body{
+  margin:0;
+  font-family:Segoe UI, sans-serif;
+  background:#eef2f7;
 }
 
-body {
-  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  background: #eef2f7;
-  margin: 0;
-  padding: 28px 20px;
+.container{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  padding:20px;
 }
 
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  background: white;
-  border-radius: 32px;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.08);
-  padding: 28px 32px 40px;
+.header{
+  font-size:22px;
+  font-weight:600;
+  margin-bottom:10px;
 }
 
-h2 {
-  margin-top: 0;
-  margin-bottom: 12px;
-  font-weight: 600;
-  font-size: 1.9rem;
-  background: linear-gradient(135deg, #1a4d8c, #3c8dbc);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+.main{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  flex:1;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  gap: 32px;
-  margin: 20px 0;
+/* LEFT */
+.card{
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.06);
 }
 
-@media (max-width: 700px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+svg{
+  display:block;
+  margin:auto;
 }
 
-.card {
-  background: #f9fafc;
-  border-radius: 28px;
-  padding: 16px 20px 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+/* RIGHT */
+.param{
+  margin-bottom:15px;
 }
 
-svg {
-  display: block;
-  margin: 12px auto;
-  background: #ffffffdd;
-  border-radius: 50%;
+label{
+  font-size:14px;
+  font-weight:600;
 }
 
-.param-row {
-  margin: 18px 0;
+input[type=range]{
+  width:100%;
 }
 
-label {
-  font-weight: 600;
-  color: #1f2b4e;
-  display: inline-block;
-  margin-bottom: 6px;
+.value{
+  font-size:13px;
+  background:#eaeef5;
+  padding:3px 8px;
+  border-radius:20px;
 }
 
-input[type="range"] {
-  width: 100%;
-  margin: 8px 0;
-  accent-color: #2c7da0;
+/* RESULTS */
+.results{
+  margin-top:10px;
 }
 
-.value-badge {
-  font-family: monospace;
-  background: #e9edf2;
-  padding: 4px 10px;
-  border-radius: 40px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  display: inline-block;
+.result{
+  font-size:18px;
+  font-weight:700;
 }
 
-.result-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 15px 0;
-}
-
-.result-card {
-  background: #f1f5f9;
-  border-radius: 20px;
-  padding: 8px 16px;
-  flex: 1;
-  min-width: 150px;
-}
-
-.result {
-  font-size: 1.45rem;
-  font-weight: 800;
-  color: #0f3b5f;
-}
-
-.toggle {
-  margin: 0 0 20px 0;
-  padding: 14px 18px;
-  background: #fefce8;
-  border-left: 6px solid #eab308;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.toggle label {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  margin: 0;
-}
-
-#match-volume {
-  width: 20px;
-  height: 20px;
-  accent-color: #eab308;
-}
-
-hr {
-  margin: 28px 0 20px;
-  border: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #cbd5e1, #94a3b8, #cbd5e1);
-}
-
-.verdict-badge {
-  padding: 12px 18px;
-  border-radius: 60px;
-  background: #eef2ff;
-  text-align: center;
-  margin-top: 16px;
-}
-
-.note {
-  font-size: 0.75rem;
-  color: #4b5563;
-  margin-top: 18px;
-  text-align: center;
+.verdict{
+  margin-top:10px;
+  padding:10px;
+  border-radius:10px;
+  text-align:center;
 }
 </style>
 </head>
+
 <body>
+
 <div class="container">
-  <h2>🧬 Hollow Fiber Comparison Tool</h2>
 
-  <div class="toggle">
-    <label>
-      <input type="checkbox" id="match-volume">
-      ⚖️ Match blood volume (fair comparison)
-    </label>
-  </div>
+<div class="header">🧬 Hollow Fiber Fair Comparison</div>
 
-  <div class="grid">
-    <div class="card">
-      <h3>📐 Fiber cross‑section</h3>
-      <div style="text-align: center;">
-        <svg id="svg-io" width="160" height="160" viewBox="0 0 150 150"></svg>
-        <p><strong>Inside‑Out</strong><br>Area: <strong id="io-area"></strong> mm²</p>
-      </div>
-      <div style="text-align: center; margin-top: 18px;">
-        <svg id="svg-oi" width="160" height="160" viewBox="0 0 150 150"></svg>
-        <p><strong>Outside‑In</strong><br>Area: <strong id="oi-area"></strong> mm²</p>
-      </div>
-    </div>
+<div class="main">
 
-    <div class="card">
-      <h3>🎛️ Parameters</h3>
-      <div class="param-row">
-        <label>Inside‑Out radius (mm)</label>
-        <input type="range" id="s-rio" min="0.05" max="0.4" step="0.005" value="0.12">
-        <div><span id="v-rio" class="value-badge">0.12</span> mm</div>
-      </div>
-      <div class="param-row">
-        <label>Outside‑In inner radius (mm)</label>
-        <input type="range" id="s-rin" min="0.2" max="0.9" step="0.01" value="0.5">
-        <div><span id="v-rin" class="value-badge">0.50</span> mm</div>
-      </div>
-      <div class="param-row">
-        <label>Outside‑In outer radius (mm)</label>
-        <input type="range" id="s-rout" min="0.7" max="2.0" step="0.01" value="1.2">
-        <div><span id="v-rout" class="value-badge">1.20</span> mm</div>
-      </div>
-      <div class="param-row">
-        <label>Blood flow Qb (mL/h)</label>
-        <input type="range" id="s-qb" min="1" max="25" step="0.5" value="6">
-        <div><span id="v-qb" class="value-badge">6.0</span> mL/h</div>
-      </div>
-      <div class="param-row">
-        <label>Inlet concentration (mM)</label>
-        <input type="range" id="s-cin" min="0.01" max="0.5" step="0.005" value="0.1">
-        <div><span id="v-cin" class="value-badge">0.100</span> mM</div>
-      </div>
-      <div class="param-row">
-        <label>OAT1 activity factor</label>
-        <input type="range" id="s-oat" min="0.2" max="2.5" step="0.05" value="1.0">
-        <div><span id="v-oat" class="value-badge">1.00</span> x</div>
-      </div>
-    </div>
-  </div>
+<!-- LEFT: GEOMETRY -->
+<div class="card">
+<h3>Geometry</h3>
 
-  <hr>
+<p style="text-align:center;">Inside-Out (fixed)</p>
+<svg id="svg-io" width="200" height="200"></svg>
 
-  <h3>📊 Results</h3>
-  <div class="result-grid">
-    <div class="result-card">
-      <p><strong>Inside‑Out CL</strong></p>
-      <p class="result" id="io-cl">—</p>
-    </div>
-    <div class="result-card">
-      <p><strong>Outside‑In CL</strong></p>
-      <p class="result" id="oi-cl">—</p>
-    </div>
-    <div class="result-card">
-      <p><strong>Volume ratio</strong></p>
-      <p class="result" id="vol-ratio">—</p>
-    </div>
-  </div>
+<p style="text-align:center;">Outside-In (design variable)</p>
+<svg id="svg-oi" width="200" height="200"></svg>
 
-  <div style="display: flex; flex-wrap: wrap; gap: 28px; margin: 20px 0;">
-    <div>
-      <p>Inside‑out residence: <strong id="io-tau">—</strong></p>
-      <p>Inside‑out volume: <span id="io-vol">—</span> µL</p>
-    </div>
-    <div>
-      <p>Outside‑in residence: <strong id="oi-tau">—</strong></p>
-      <p>Outside‑in volume: <span id="oi-vol">—</span> µL</p>
-    </div>
-  </div>
+<p style="text-align:center;">
+Area IO: <span id="io-area"></span><br>
+Area OI: <span id="oi-area"></span>
+</p>
 
-  <div id="verdict" class="verdict-badge">Ready</div>
+</div>
+
+<!-- RIGHT: PARAMETERS -->
+<div class="card">
+
+<h3>Design Parameters (Outside-In)</h3>
+
+<div class="param">
+<label>Inner radius Rin</label><br>
+<input type="range" id="rin" min="0.3" max="0.9" step="0.01" value="0.5">
+<span id="rin-v" class="value"></span>
+</div>
+
+<div class="param">
+<label>Outer radius Rout</label><br>
+<input type="range" id="rout" min="0.6" max="2.0" step="0.01" value="1.2">
+<span id="rout-v" class="value"></span>
+</div>
+
+<div class="param">
+<label>Blood flow Qb</label><br>
+<input type="range" id="qb" min="1" max="20" step="0.5" value="6">
+<span id="qb-v" class="value"></span>
+</div>
+
+<div class="param">
+<label>OAT1 activity</label><br>
+<input type="range" id="oat" min="0.2" max="2.0" step="0.05" value="1">
+<span id="oat-v" class="value"></span>
+</div>
+
+<div class="results">
+<p>Inside-Out CL: <span id="cl-io" class="result"></span></p>
+<p>Outside-In CL: <span id="cl-oi" class="result"></span></p>
+<p>Volume ratio: <span id="vr"></span></p>
+
+<div id="verdict" class="verdict"></div>
+</div>
+
+</div>
+
+</div>
 </div>
 
 <script>
-(function() {
-  // Get all DOM elements safely
-  const sRio = document.getElementById('s-rio');
-  const sRin = document.getElementById('s-rin');
-  const sRout = document.getElementById('s-rout');
-  const sQb = document.getElementById('s-qb');
-  const sCin = document.getElementById('s-cin');
-  const sOat = document.getElementById('s-oat');
-  const matchVolumeCheck = document.getElementById('match-volume');
-  
-  const FIBER_LENGTH = 50;
-  const Km = 0.05;
-  const BASE_Vmax = 0.002;
-  const MEM_AREA_FACTOR = 10;
-  
-  function drawInsideOut(R) {
-    const svg = document.getElementById('svg-io');
-    if (!svg) return;
-    svg.innerHTML = '';
-    const scale = Math.min(45, Math.max(18, 60 / Math.max(R, 0.05)));
-    const r = Math.min(R * scale, 68);
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', '75');
-    circle.setAttribute('cy', '75');
-    circle.setAttribute('r', r);
-    circle.setAttribute('fill', '#FFB3A7');
-    svg.appendChild(circle);
+(function(){
+
+const R_io = 0.12; // FIXED reference
+const L = 50;
+const Km = 0.05;
+const Vmax_base = 0.002;
+
+function drawIO(){
+  const svg = document.getElementById("svg-io");
+  svg.innerHTML="";
+  const cx=100, cy=100;
+  const scale=300;
+
+  function circle(r,color){
+    let c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    c.setAttribute("cx",cx);
+    c.setAttribute("cy",cy);
+    c.setAttribute("r",r*scale);
+    c.setAttribute("fill",color);
+    svg.appendChild(c);
   }
-  
-  function drawOutsideIn(Rin, Rout) {
-    const svg = document.getElementById('svg-oi');
-    if (!svg) return;
-    svg.innerHTML = '';
-    const scale = Math.min(42, Math.max(14, 55 / Math.max(Rout, 0.5)));
-    const outer = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    outer.setAttribute('cx', '75');
-    outer.setAttribute('cy', '75');
-    outer.setAttribute('r', Rout * scale);
-    outer.setAttribute('fill', '#FFB3A7');
-    const inner = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    inner.setAttribute('cx', '75');
-    inner.setAttribute('cy', '75');
-    inner.setAttribute('r', Rin * scale);
-    inner.setAttribute('fill', '#ffffff');
-    svg.appendChild(outer);
-    svg.appendChild(inner);
+
+  circle(R_io+0.2,"#FAEEDA"); // dialysate
+  circle(R_io+0.1,"#FBEAF0"); // cell
+  circle(R_io+0.05,"#B5D4F4"); // membrane
+  circle(R_io,"#F5C4B3"); // blood
+}
+
+function drawOI(Rin,Rout){
+  const svg = document.getElementById("svg-oi");
+  svg.innerHTML="";
+  const cx=100, cy=100;
+  const scale=150;
+
+  function circle(r,color){
+    let c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    c.setAttribute("cx",cx);
+    c.setAttribute("cy",cy);
+    c.setAttribute("r",r*scale);
+    c.setAttribute("fill",color);
+    svg.appendChild(c);
   }
-  
-  function update() {
-    // Get all values safely
-    let R_io = parseFloat(sRio.value);
-    let Rin = parseFloat(sRin.value);
-    let Rout = parseFloat(sRout.value);
-    let Qb = parseFloat(sQb.value);
-    let Cin = parseFloat(sCin.value);
-    let oat = parseFloat(sOat.value);
-    let matchVolume = matchVolumeCheck.checked;
-    
-    // Validate
-    if (isNaN(R_io)) R_io = 0.12;
-    if (isNaN(Rin)) Rin = 0.5;
-    if (isNaN(Rout)) Rout = 1.2;
-    if (Rout <= Rin + 0.02) Rout = Rin + 0.05;
-    
-    // Update displays
-    document.getElementById('v-rio').innerText = R_io.toFixed(3);
-    document.getElementById('v-rin').innerText = Rin.toFixed(3);
-    document.getElementById('v-rout').innerText = Rout.toFixed(3);
-    document.getElementById('v-qb').innerText = Qb.toFixed(1);
-    document.getElementById('v-cin').innerText = Cin.toFixed(3);
-    document.getElementById('v-oat').innerText = oat.toFixed(2);
-    
-    // Calculate areas
-    let A_io = Math.PI * R_io * R_io;
-    let A_oi = Math.PI * (Rout * Rout - Rin * Rin);
-    let V_io = A_io * FIBER_LENGTH;
-    let V_oi = A_oi * FIBER_LENGTH;
-    
-    // Match volumes if checked
-    if (matchVolume && V_io > 0) {
-      const targetArea = V_io / FIBER_LENGTH;
-      const newRout = Math.sqrt(targetArea / Math.PI + Rin * Rin);
-      if (!isNaN(newRout) && newRout > Rin) {
-        Rout = newRout;
-        sRout.value = Rout.toFixed(3);
-        document.getElementById('v-rout').innerText = Rout.toFixed(3);
-        A_oi = Math.PI * (Rout * Rout - Rin * Rin);
-        V_oi = A_oi * FIBER_LENGTH;
-      }
-    }
-    
-    // Update displays
-    document.getElementById('io-area').innerText = A_io.toFixed(4);
-    document.getElementById('oi-area').innerText = A_oi.toFixed(4);
-    document.getElementById('io-vol').innerText = V_io.toFixed(2);
-    document.getElementById('oi-vol').innerText = V_oi.toFixed(2);
-    
-    // Residence time
-    const tau_io_min = (V_io / 1000 / Qb) * 60;
-    const tau_oi_min = (V_oi / 1000 / Qb) * 60;
-    document.getElementById('io-tau').innerText = tau_io_min.toFixed(2) + ' min';
-    document.getElementById('oi-tau').innerText = tau_oi_min.toFixed(2) + ' min';
-    
-    // Clearance calculation
-    const areaRatio = Math.min(A_oi / A_io, 3);
-    const memArea_io = MEM_AREA_FACTOR;
-    const memArea_oi = MEM_AREA_FACTOR * areaRatio;
-    const Vmax_io = BASE_Vmax * oat * memArea_io;
-    const Vmax_oi = BASE_Vmax * oat * memArea_oi;
-    const J_io = (Vmax_io * Cin) / (Km + Cin);
-    const J_oi = (Vmax_oi * Cin) / (Km + Cin);
-    
-    const resFactor_io = 1 + 0.28 * Math.log(1 + tau_io_min / 4.5);
-    const resFactor_oi = 1 + 0.22 * Math.log(1 + tau_oi_min / 5.0);
-    
-    let CL_io = (J_io / Cin) / 60 * resFactor_io;
-    let CL_oi = (J_oi / Cin) / 60 * resFactor_oi;
-    if (isNaN(CL_io)) CL_io = 0;
-    if (isNaN(CL_oi)) CL_oi = 0;
-    
-    document.getElementById('io-cl').innerText = CL_io.toFixed(5);
-    document.getElementById('oi-cl').innerText = CL_oi.toFixed(5);
-    document.getElementById('vol-ratio').innerText = (V_oi / V_io).toFixed(2) + ' ×';
-    
-    const verdict = document.getElementById('verdict');
-    if (!matchVolume) {
-      verdict.innerHTML = '⚠️ Not a fair comparison (volume mismatch)';
-      verdict.style.background = '#fff1f0';
-    } else {
-      verdict.innerHTML = '✅ Fair comparison (matched volume)';
-      verdict.style.background = '#e6f7ec';
-    }
-    
-    drawInsideOut(R_io);
-    drawOutsideIn(Rin, Rout);
-  }
-  
-  // Add event listeners
-  const inputs = [sRio, sRin, sRout, sQb, sCin, sOat, matchVolumeCheck];
-  inputs.forEach(input => {
-    if (input) input.addEventListener('input', update);
-  });
-  
-  update();
+
+  circle(Rout,"#F5C4B3"); // blood
+  circle(Rin,"white"); // hole
+
+  circle(Rin-0.05,"#B5D4F4"); // membrane
+  circle(Rin-0.1,"#FBEAF0"); // cell
+  circle(Rin-0.2,"#FAEEDA"); // dialysate
+}
+
+function update(){
+
+let Rin=parseFloat(rin.value);
+let Rout=parseFloat(rout.value);
+let Qb=parseFloat(qb.value);
+let oat=parseFloat(oat.value);
+
+if(Rout<=Rin+0.05) Rout=Rin+0.05;
+
+rin_v.innerText=Rin.toFixed(2);
+rout_v.innerText=Rout.toFixed(2);
+qb_v.innerText=Qb.toFixed(1);
+oat_v.innerText=oat.toFixed(2);
+
+// Areas
+let A_io=Math.PI*R_io*R_io;
+let A_oi=Math.PI*(Rout*Rout-Rin*Rin);
+
+// Volumes
+let V_io=A_io*L;
+let V_oi=A_oi*L;
+
+io_area.innerText=A_io.toFixed(4);
+oi_area.innerText=A_oi.toFixed(4);
+
+// Clearance model
+let Vmax_io=Vmax_base*oat*10;
+let Vmax_oi=Vmax_base*oat*10*(A_oi/A_io);
+
+let CL_io=(Vmax_io)/(Km+0.1);
+let CL_oi=(Vmax_oi)/(Km+0.1);
+
+// residence effect
+let tau_io=(V_io/1000)/Qb;
+let tau_oi=(V_oi/1000)/Qb;
+
+CL_io*=1+0.2*Math.log(1+tau_io);
+CL_oi*=1+0.2*Math.log(1+tau_oi);
+
+cl_io.innerText=CL_io.toFixed(4);
+cl_oi.innerText=CL_oi.toFixed(4);
+
+vr.innerText=(V_oi/V_io).toFixed(2)+"x";
+
+// verdict
+if(V_oi/V_io>5){
+  verdict.innerHTML="⚠️ Not fair (volume mismatch)";
+  verdict.style.background="#ffecec";
+}else{
+  verdict.innerHTML="✅ Fair comparison";
+  verdict.style.background="#e8f8ec";
+}
+
+drawIO();
+drawOI(Rin,Rout);
+}
+
+document.querySelectorAll("input").forEach(el=>el.addEventListener("input",update));
+
+update();
+
 })();
 </script>
+
 </body>
 </html>
