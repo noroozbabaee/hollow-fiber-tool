@@ -1,272 +1,156 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hollow Fiber Comparison</title>
+(function() {
 
-<style>
-body{
-  margin:0;
-  font-family:Segoe UI, sans-serif;
-  background:#eef2f7;
-}
+  const L = 50;
+  const R_lumen = 0.12;
 
-.container{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  padding:20px;
-}
+  const Km = 0.05;
+  const BASE_Vmax = 0.0025;
+  const DIFFUSION_COEFF = 1.2e-4;
 
-.header{
-  font-size:22px;
-  font-weight:600;
-  margin-bottom:10px;
-}
+  const areaSlider = document.getElementById('areaSlider');
+  const qbSlider = document.getElementById('qbSlider');
+  const cinSlider = document.getElementById('cinSlider');
+  const oatSlider = document.getElementById('oatSlider');
 
-.main{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
-  flex:1;
-}
+  const ioCLspan = document.getElementById('ioCL');
+  const oiCLspan = document.getElementById('oiCL');
+  const ioVolSpan = document.getElementById('ioVol');
+  const oiVolSpan = document.getElementById('oiVol');
+  const ioTauSpan = document.getElementById('ioTau');
+  const oiTauSpan = document.getElementById('oiTau');
+  const ioBar = document.getElementById('ioBar');
+  const oiBar = document.getElementById('oiBar');
+  const verdictDiv = document.getElementById('verdict');
 
-/* LEFT */
-.card{
-  background:white;
-  border-radius:20px;
-  padding:20px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.06);
-}
+  const svgIO = document.querySelectorAll("svg")[0];
+  const svgOI = document.querySelectorAll("svg")[1];
 
-svg{
-  display:block;
-  margin:auto;
-}
+  // =========================
+  // DRAW FUNCTIONS
+  // =========================
 
-/* RIGHT */
-.param{
-  margin-bottom:15px;
-}
+  function drawInsideOut() {
+    svgIO.innerHTML = "";
 
-label{
-  font-size:14px;
-  font-weight:600;
-}
+    const cx = 55;
+    const cy = 55;
+    const scale = 300;
 
-input[type=range]{
-  width:100%;
-}
+    function circle(r, color) {
+      const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("cx", cx);
+      c.setAttribute("cy", cy);
+      c.setAttribute("r", r * scale);
+      c.setAttribute("fill", color);
+      svgIO.appendChild(c);
+    }
 
-.value{
-  font-size:13px;
-  background:#eaeef5;
-  padding:3px 8px;
-  border-radius:20px;
-}
-
-/* RESULTS */
-.results{
-  margin-top:10px;
-}
-
-.result{
-  font-size:18px;
-  font-weight:700;
-}
-
-.verdict{
-  margin-top:10px;
-  padding:10px;
-  border-radius:10px;
-  text-align:center;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="header">🧬 Hollow Fiber Fair Comparison</div>
-
-<div class="main">
-
-<!-- LEFT: GEOMETRY -->
-<div class="card">
-<h3>Geometry</h3>
-
-<p style="text-align:center;">Inside-Out (fixed)</p>
-<svg id="svg-io" width="200" height="200"></svg>
-
-<p style="text-align:center;">Outside-In (design variable)</p>
-<svg id="svg-oi" width="200" height="200"></svg>
-
-<p style="text-align:center;">
-Area IO: <span id="io-area"></span><br>
-Area OI: <span id="oi-area"></span>
-</p>
-
-</div>
-
-<!-- RIGHT: PARAMETERS -->
-<div class="card">
-
-<h3>Design Parameters (Outside-In)</h3>
-
-<div class="param">
-<label>Inner radius Rin</label><br>
-<input type="range" id="rin" min="0.3" max="0.9" step="0.01" value="0.5">
-<span id="rin-v" class="value"></span>
-</div>
-
-<div class="param">
-<label>Outer radius Rout</label><br>
-<input type="range" id="rout" min="0.6" max="2.0" step="0.01" value="1.2">
-<span id="rout-v" class="value"></span>
-</div>
-
-<div class="param">
-<label>Blood flow Qb</label><br>
-<input type="range" id="qb" min="1" max="20" step="0.5" value="6">
-<span id="qb-v" class="value"></span>
-</div>
-
-<div class="param">
-<label>OAT1 activity</label><br>
-<input type="range" id="oat" min="0.2" max="2.0" step="0.05" value="1">
-<span id="oat-v" class="value"></span>
-</div>
-
-<div class="results">
-<p>Inside-Out CL: <span id="cl-io" class="result"></span></p>
-<p>Outside-In CL: <span id="cl-oi" class="result"></span></p>
-<p>Volume ratio: <span id="vr"></span></p>
-
-<div id="verdict" class="verdict"></div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-<script>
-(function(){
-
-const R_io = 0.12; // FIXED reference
-const L = 50;
-const Km = 0.05;
-const Vmax_base = 0.002;
-
-function drawIO(){
-  const svg = document.getElementById("svg-io");
-  svg.innerHTML="";
-  const cx=100, cy=100;
-  const scale=300;
-
-  function circle(r,color){
-    let c=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    c.setAttribute("cx",cx);
-    c.setAttribute("cy",cy);
-    c.setAttribute("r",r*scale);
-    c.setAttribute("fill",color);
-    svg.appendChild(c);
+    circle(R_lumen + 0.25, "#FAEEDA"); // dialysate
+    circle(R_lumen + 0.18, "#FBEAF0"); // cell
+    circle(R_lumen + 0.12, "#B5D4F4"); // membrane
+    circle(R_lumen, "#F5C4B3"); // blood
   }
 
-  circle(R_io+0.2,"#FAEEDA"); // dialysate
-  circle(R_io+0.1,"#FBEAF0"); // cell
-  circle(R_io+0.05,"#B5D4F4"); // membrane
-  circle(R_io,"#F5C4B3"); // blood
-}
+  function drawOutsideIn(A_mem) {
+    svgOI.innerHTML = "";
 
-function drawOI(Rin,Rout){
-  const svg = document.getElementById("svg-oi");
-  svg.innerHTML="";
-  const cx=100, cy=100;
-  const scale=150;
+    const cx = 55;
+    const cy = 55;
 
-  function circle(r,color){
-    let c=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    c.setAttribute("cx",cx);
-    c.setAttribute("cy",cy);
-    c.setAttribute("r",r*scale);
-    c.setAttribute("fill",color);
-    svg.appendChild(c);
+    // convert area → radii (simple mapping)
+    const Rin = 0.4;
+    const Rout = Math.sqrt(A_mem / Math.PI + Rin * Rin);
+
+    const scale = 80;
+
+    function circle(r, color) {
+      const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("cx", cx);
+      c.setAttribute("cy", cy);
+      c.setAttribute("r", r * scale);
+      c.setAttribute("fill", color);
+      svgOI.appendChild(c);
+    }
+
+    // OUTSIDE → INSIDE
+    circle(Rout, "#F5C4B3"); // blood
+    circle(Rin, "#ffffff"); // hollow
+
+    circle(Rin - 0.08, "#B5D4F4"); // membrane
+    circle(Rin - 0.15, "#FBEAF0"); // cell
+    circle(Rin - 0.25, "#FAEEDA"); // dialysate
   }
 
-  circle(Rout,"#F5C4B3"); // blood
-  circle(Rin,"white"); // hole
+  // =========================
+  // MODEL UPDATE
+  // =========================
 
-  circle(Rin-0.05,"#B5D4F4"); // membrane
-  circle(Rin-0.1,"#FBEAF0"); // cell
-  circle(Rin-0.2,"#FAEEDA"); // dialysate
-}
+  function update() {
 
-function update(){
+    const A_mem = parseFloat(areaSlider.value);
+    const Qb = parseFloat(qbSlider.value);
+    const Cin = parseFloat(cinSlider.value);
+    const oat = parseFloat(oatSlider.value);
 
-let Rin=parseFloat(rin.value);
-let Rout=parseFloat(rout.value);
-let Qb=parseFloat(qb.value);
-let oat=parseFloat(oat.value);
+    // volumes
+    const A_lumen = Math.PI * R_lumen * R_lumen;
+    const A_shell = A_mem;
 
-if(Rout<=Rin+0.05) Rout=Rin+0.05;
+    const V_io = A_lumen * L;
+    const V_oi = A_shell * L;
 
-rin_v.innerText=Rin.toFixed(2);
-rout_v.innerText=Rout.toFixed(2);
-qb_v.innerText=Qb.toFixed(1);
-oat_v.innerText=oat.toFixed(2);
+    const tau_io = (V_io / 1000) / Qb;
+    const tau_oi = (V_oi / 1000) / Qb;
 
-// Areas
-let A_io=Math.PI*R_io*R_io;
-let A_oi=Math.PI*(Rout*Rout-Rin*Rin);
+    ioVolSpan.textContent = V_io.toFixed(1) + ' µL';
+    oiVolSpan.textContent = V_oi.toFixed(1) + ' µL';
 
-// Volumes
-let V_io=A_io*L;
-let V_oi=A_oi*L;
+    ioTauSpan.textContent = (tau_io * 60).toFixed(1) + ' min';
+    oiTauSpan.textContent = (tau_oi * 60).toFixed(1) + ' min';
 
-io_area.innerText=A_io.toFixed(4);
-oi_area.innerText=A_oi.toFixed(4);
+    // kinetics
+    const Vmax_io = BASE_Vmax * oat * A_mem;
+    const Vmax_oi = BASE_Vmax * oat * A_mem * 1.2;
 
-// Clearance model
-let Vmax_io=Vmax_base*oat*10;
-let Vmax_oi=Vmax_base*oat*10*(A_oi/A_io);
+    const J_io = (Vmax_io * Cin) / (Km + Cin);
+    const J_oi = (Vmax_oi * Cin) / (Km + Cin);
 
-let CL_io=(Vmax_io)/(Km+0.1);
-let CL_oi=(Vmax_oi)/(Km+0.1);
+    const CL_io = (J_io / Cin) * (1 + 0.25 * Math.log(1 + tau_io));
+    const CL_oi = (J_oi / Cin) * (1 + 0.20 * Math.log(1 + tau_oi));
 
-// residence effect
-let tau_io=(V_io/1000)/Qb;
-let tau_oi=(V_oi/1000)/Qb;
+    const CL_io_m = CL_io / 60;
+    const CL_oi_m = CL_oi / 60;
 
-CL_io*=1+0.2*Math.log(1+tau_io);
-CL_oi*=1+0.2*Math.log(1+tau_oi);
+    ioCLspan.textContent = CL_io_m.toFixed(5);
+    oiCLspan.textContent = CL_oi_m.toFixed(5);
 
-cl_io.innerText=CL_io.toFixed(4);
-cl_oi.innerText=CL_oi.toFixed(4);
+    const max = Math.max(CL_io_m, CL_oi_m, 1e-6);
+    ioBar.style.width = (CL_io_m / max * 100) + "%";
+    oiBar.style.width = (CL_oi_m / max * 100) + "%";
 
-vr.innerText=(V_oi/V_io).toFixed(2)+"x";
+    const ratio = CL_oi_m / CL_io_m;
 
-// verdict
-if(V_oi/V_io>5){
-  verdict.innerHTML="⚠️ Not fair (volume mismatch)";
-  verdict.style.background="#ffecec";
-}else{
-  verdict.innerHTML="✅ Fair comparison";
-  verdict.style.background="#e8f8ec";
-}
+    if (ratio > 1.2) {
+      verdictDiv.className = 'verdict verdict-oi';
+      verdictDiv.innerHTML = "Outside-in better (geometry-driven)";
+    } else if (ratio < 0.8) {
+      verdictDiv.className = 'verdict verdict-io';
+      verdictDiv.innerHTML = "Inside-out better (short path advantage)";
+    } else {
+      verdictDiv.className = 'verdict verdict-equal';
+      verdictDiv.innerHTML = "Comparable performance";
+    }
 
-drawIO();
-drawOI(Rin,Rout);
-}
+    // 🔥 DRAW HERE
+    drawInsideOut();
+    drawOutsideIn(A_mem);
+  }
 
-document.querySelectorAll("input").forEach(el=>el.addEventListener("input",update));
+  areaSlider.addEventListener('input', update);
+  qbSlider.addEventListener('input', update);
+  cinSlider.addEventListener('input', update);
+  oatSlider.addEventListener('input', update);
 
-update();
+  update();
 
 })();
-</script>
-
-</body>
-</html>
