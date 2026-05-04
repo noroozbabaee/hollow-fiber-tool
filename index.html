@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hollow Fiber Bioreactor · Inside-Out vs Outside-In Performance</title>
+<title>Hollow Fiber Bioreactor · Inside-Out vs Outside-In</title>
 <style>
 * {
   box-sizing: border-box;
@@ -23,7 +23,6 @@ body {
   border-radius: 32px;
   box-shadow: 0 12px 28px rgba(0,0,0,0.08);
   padding: 28px 32px 40px;
-  transition: all 0.2s;
 }
 
 h2 {
@@ -35,31 +34,18 @@ h2 {
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  letter-spacing: -0.2px;
-}
-
-.sub {
-  color: #2c3e66;
-  border-left: 4px solid #3b82f6;
-  padding-left: 14px;
-  margin-bottom: 24px;
-  font-weight: 450;
 }
 
 .grid {
   display: grid;
   grid-template-columns: 1fr 1.1fr;
   gap: 32px;
-  margin: 20px 0 20px;
+  margin: 20px 0;
 }
 
 @media (max-width: 700px) {
   .grid {
     grid-template-columns: 1fr;
-    gap: 28px;
-  }
-  .container {
-    padding: 20px;
   }
 }
 
@@ -75,7 +61,6 @@ svg {
   margin: 12px auto;
   background: #ffffffdd;
   border-radius: 50%;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
 }
 
 .param-row {
@@ -87,17 +72,16 @@ label {
   color: #1f2b4e;
   display: inline-block;
   margin-bottom: 6px;
-  font-size: 0.9rem;
 }
 
 input[type="range"] {
   width: 100%;
-  margin: 8px 0 4px;
+  margin: 8px 0;
   accent-color: #2c7da0;
 }
 
 .value-badge {
-  font-family: 'Courier New', monospace;
+  font-family: monospace;
   background: #e9edf2;
   padding: 4px 10px;
   border-radius: 40px;
@@ -106,39 +90,25 @@ input[type="range"] {
   display: inline-block;
 }
 
-.result-block {
-  background: #ffffff;
-  border-radius: 24px;
-  padding: 14px 20px;
-  margin: 18px 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  border: 1px solid #e2e8f0;
-}
-
 .result-grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   gap: 12px;
+  margin: 15px 0;
 }
 
 .result-card {
   background: #f1f5f9;
   border-radius: 20px;
   padding: 8px 16px;
-  min-width: 160px;
   flex: 1;
-}
-
-.result-card p {
-  margin: 8px 0;
+  min-width: 150px;
 }
 
 .result {
   font-size: 1.45rem;
   font-weight: 800;
   color: #0f3b5f;
-  letter-spacing: -0.3px;
 }
 
 .toggle {
@@ -147,7 +117,6 @@ input[type="range"] {
   background: #fefce8;
   border-left: 6px solid #eab308;
   border-radius: 20px;
-  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -159,9 +128,7 @@ input[type="range"] {
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  font-weight: 600;
   margin: 0;
-  color: #854d0e;
 }
 
 #match-volume {
@@ -178,14 +145,11 @@ hr {
 }
 
 .verdict-badge {
-  font-weight: 700;
   padding: 12px 18px;
   border-radius: 60px;
   background: #eef2ff;
-  display: inline-block;
-  width: 100%;
   text-align: center;
-  font-size: 1rem;
+  margin-top: 16px;
 }
 
 .note {
@@ -199,389 +163,240 @@ hr {
 <body>
 <div class="container">
   <h2>🧬 Hollow Fiber Comparison Tool</h2>
-  <div class="sub">Inside‑Out vs Outside‑In · mass transfer & clearance</div>
 
   <div class="toggle">
     <label>
       <input type="checkbox" id="match-volume">
-      ⚖️ Match fiber volume (fair comparison — same matrix volume)
+      ⚖️ Match blood volume (fair comparison)
     </label>
-    <span style="font-size:0.85rem; color:#5b5b5b;">🔬 equalizes volume, adjusts outer radius</span>
   </div>
 
   <div class="grid">
-    <!-- LEFT: geometry + schematics -->
     <div class="card">
-      <h3 style="margin-top:0;">📐 Fiber cross‑section</h3>
+      <h3>📐 Fiber cross‑section</h3>
       <div style="text-align: center;">
-        <svg id="svg-io" width="160" height="160" viewBox="0 0 150 150" style="background: #fef9f0; border-radius: 50%;"></svg>
-        <p style="margin: 4px 0;"><strong>⬇️ Inside‑Out</strong><br><span style="font-size:0.85rem;">blood in lumen → shell side removed</span><br>Area (cross‑sec): <strong id="io-area" style="background:#e2e8f0; padding:2px 8px; border-radius:20px;"></strong> mm²</p>
+        <svg id="svg-io" width="160" height="160" viewBox="0 0 150 150"></svg>
+        <p><strong>Inside‑Out</strong><br>Area: <strong id="io-area"></strong> mm²</p>
       </div>
       <div style="text-align: center; margin-top: 18px;">
-        <svg id="svg-oi" width="160" height="160" viewBox="0 0 150 150" style="background: #fef9f0; border-radius: 50%;"></svg>
-        <p style="margin: 4px 0;"><strong>⬆️ Outside‑In</strong><br><span style="font-size:0.85rem;">blood in annular space → lumen</span><br>Annular area: <strong id="oi-area" style="background:#e2e8f0; padding:2px 8px; border-radius:20px;"></strong> mm²</p>
+        <svg id="svg-oi" width="160" height="160" viewBox="0 0 150 150"></svg>
+        <p><strong>Outside‑In</strong><br>Area: <strong id="oi-area"></strong> mm²</p>
       </div>
     </div>
 
-    <!-- RIGHT: controls -->
     <div class="card">
-      <h3 style="margin-top:0;">🎛️ Configuration & parameters</h3>
+      <h3>🎛️ Parameters</h3>
       <div class="param-row">
-        <label>🔴 Inside‑Out radius (R) [mm]</label>
+        <label>Inside‑Out radius (mm)</label>
         <input type="range" id="s-rio" min="0.05" max="0.4" step="0.005" value="0.12">
         <div><span id="v-rio" class="value-badge">0.12</span> mm</div>
       </div>
       <div class="param-row">
-        <label>🟠 Outside‑In inner radius (Rin) [mm]</label>
+        <label>Outside‑In inner radius (mm)</label>
         <input type="range" id="s-rin" min="0.2" max="0.9" step="0.01" value="0.5">
         <div><span id="v-rin" class="value-badge">0.50</span> mm</div>
       </div>
       <div class="param-row">
-        <label>🟤 Outside‑In outer radius (Rout) [mm]</label>
+        <label>Outside‑In outer radius (mm)</label>
         <input type="range" id="s-rout" min="0.7" max="2.0" step="0.01" value="1.2">
         <div><span id="v-rout" class="value-badge">1.20</span> mm</div>
       </div>
       <div class="param-row">
-        <label>💧 Blood flow rate Qb [mL/h]</label>
+        <label>Blood flow Qb (mL/h)</label>
         <input type="range" id="s-qb" min="1" max="25" step="0.5" value="6">
         <div><span id="v-qb" class="value-badge">6.0</span> mL/h</div>
       </div>
       <div class="param-row">
-        <label>🧪 Inlet solute concentration (Cin) [mM]</label>
+        <label>Inlet concentration (mM)</label>
         <input type="range" id="s-cin" min="0.01" max="0.5" step="0.005" value="0.1">
         <div><span id="v-cin" class="value-badge">0.100</span> mM</div>
       </div>
       <div class="param-row">
-        <label>⚡ OAT1 activity factor (Vmax multiplier)</label>
+        <label>OAT1 activity factor</label>
         <input type="range" id="s-oat" min="0.2" max="2.5" step="0.05" value="1.0">
         <div><span id="v-oat" class="value-badge">1.00</span> x</div>
       </div>
-      <div class="note">🔬 Membrane area effect: outside‑in utilizes annular surface area (capped at 3× inside‑out area). Michaelis‑Menten uptake + residence time correction.</div>
     </div>
   </div>
 
   <hr>
 
-  <h3>📊 Clearance & performance</h3>
+  <h3>📊 Results</h3>
   <div class="result-grid">
     <div class="result-card">
-      <p><strong>🧪 Inside‑Out CL</strong></p>
+      <p><strong>Inside‑Out CL</strong></p>
       <p class="result" id="io-cl">—</p>
-      <span style="font-size:0.75rem;">mL/min · normalized</span>
     </div>
     <div class="result-card">
-      <p><strong>🧪 Outside‑In CL</strong></p>
+      <p><strong>Outside‑In CL</strong></p>
       <p class="result" id="oi-cl">—</p>
-      <span style="font-size:0.75rem;">mL/min · normalized</span>
     </div>
     <div class="result-card">
-      <p><strong>📦 Volume ratio (Out/In)</strong></p>
+      <p><strong>Volume ratio</strong></p>
       <p class="result" id="vol-ratio">—</p>
-      <span style="font-size:0.75rem;">× factor</span>
     </div>
   </div>
 
-  <div style="display: flex; flex-wrap: wrap; gap: 28px; margin: 20px 0 10px;">
+  <div style="display: flex; flex-wrap: wrap; gap: 28px; margin: 20px 0;">
     <div>
-      <p>🕒 Inside‑out residence τ: <strong id="io-tau" style="background:#e2e8f0; padding:4px 12px; border-radius:32px;">—</strong></p>
-      <p>💊 Inside‑out vol: <span id="io-vol">—</span> µL</p>
+      <p>Inside‑out residence: <strong id="io-tau">—</strong></p>
+      <p>Inside‑out volume: <span id="io-vol">—</span> µL</p>
     </div>
     <div>
-      <p>🕒 Outside‑in residence τ: <strong id="oi-tau" style="background:#e2e8f0; padding:4px 12px; border-radius:32px;">—</strong></p>
-      <p>💊 Outside‑in vol: <span id="oi-vol">—</span> µL</p>
+      <p>Outside‑in residence: <strong id="oi-tau">—</strong></p>
+      <p>Outside‑in volume: <span id="oi-vol">—</span> µL</p>
     </div>
   </div>
 
-  <div id="verdict" class="verdict-badge" style="margin-top: 16px;">⚖️ Analysis ready</div>
-  <div class="note">📌 Clearance estimation: uptake flux (Vmax·Cin/(Km+Cin)) × membrane area × residence modulation (log factor). Km fixed = 0.05 mM. Fiber length = 50 mm (fixed).</div>
+  <div id="verdict" class="verdict-badge">Ready</div>
 </div>
 
 <script>
-  (function(){
-    // DOM elements
-    const sRio = document.getElementById('s-rio');
-    const sRin = document.getElementById('s-rin');
-    const sRout = document.getElementById('s-rout');
-    const sQb = document.getElementById('s-qb');
-    const sCin = document.getElementById('s-cin');
-    const sOat = document.getElementById('s-oat');
-    const matchVolCheck = document.getElementById('match-volume');
-
-    const vRioSpan = document.getElementById('v-rio');
-    const vRinSpan = document.getElementById('v-rin');
-    const vRoutSpan = document.getElementById('v-rout');
-    const vQbSpan = document.getElementById('v-qb');
-    const vCinSpan = document.getElementById('v-cin');
-    const vOatSpan = document.getElementById('v-oat');
-
-    const ioAreaSpan = document.getElementById('io-area');
-    const oiAreaSpan = document.getElementById('oi-area');
-    const ioVolSpan = document.getElementById('io-vol');
-    const oiVolSpan = document.getElementById('oi-vol');
-    const ioTauSpan = document.getElementById('io-tau');
-    const oiTauSpan = document.getElementById('oi-tau');
-    const ioClSpan = document.getElementById('io-cl');
-    const oiClSpan = document.getElementById('oi-cl');
-    const volRatioSpan = document.getElementById('vol-ratio');
-    const verdictSpan = document.getElementById('verdict');
-
-    const svgIo = document.getElementById('svg-io');
-    const svgOi = document.getElementById('svg-oi');
-
-    const FIBER_LENGTH = 50;   // mm
-    const Km = 0.05;           // mM (Michaelis constant)
-    const BASE_Vmax = 0.002;   // mmol/(h·mm² membrane area) baseline per mm²
-    const MEM_AREA_FACTOR = 10; // mm² membrane per fiber segment (scales flux)
-
-    // Helper: draw inside-out (single circle)
-    function drawInsideOut(R_mm) {
-      svgIo.innerHTML = '';
-      const viewSize = 150;
-      const maxRadiusLimit = 1.8;
-      let scale = 1;
-      if(R_mm > 0.01) {
-        scale = (viewSize * 0.4) / Math.min(R_mm, 1.4);
-        if(scale > 45) scale = 45;
-        if(scale < 18) scale = 18;
+(function() {
+  // Get all DOM elements safely
+  const sRio = document.getElementById('s-rio');
+  const sRin = document.getElementById('s-rin');
+  const sRout = document.getElementById('s-rout');
+  const sQb = document.getElementById('s-qb');
+  const sCin = document.getElementById('s-cin');
+  const sOat = document.getElementById('s-oat');
+  const matchVolumeCheck = document.getElementById('match-volume');
+  
+  const FIBER_LENGTH = 50;
+  const Km = 0.05;
+  const BASE_Vmax = 0.002;
+  const MEM_AREA_FACTOR = 10;
+  
+  function drawInsideOut(R) {
+    const svg = document.getElementById('svg-io');
+    if (!svg) return;
+    svg.innerHTML = '';
+    const scale = Math.min(45, Math.max(18, 60 / Math.max(R, 0.05)));
+    const r = Math.min(R * scale, 68);
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '75');
+    circle.setAttribute('cy', '75');
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', '#FFB3A7');
+    svg.appendChild(circle);
+  }
+  
+  function drawOutsideIn(Rin, Rout) {
+    const svg = document.getElementById('svg-oi');
+    if (!svg) return;
+    svg.innerHTML = '';
+    const scale = Math.min(42, Math.max(14, 55 / Math.max(Rout, 0.5)));
+    const outer = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    outer.setAttribute('cx', '75');
+    outer.setAttribute('cy', '75');
+    outer.setAttribute('r', Rout * scale);
+    outer.setAttribute('fill', '#FFB3A7');
+    const inner = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    inner.setAttribute('cx', '75');
+    inner.setAttribute('cy', '75');
+    inner.setAttribute('r', Rin * scale);
+    inner.setAttribute('fill', '#ffffff');
+    svg.appendChild(outer);
+    svg.appendChild(inner);
+  }
+  
+  function update() {
+    // Get all values safely
+    let R_io = parseFloat(sRio.value);
+    let Rin = parseFloat(sRin.value);
+    let Rout = parseFloat(sRout.value);
+    let Qb = parseFloat(sQb.value);
+    let Cin = parseFloat(sCin.value);
+    let oat = parseFloat(sOat.value);
+    let matchVolume = matchVolumeCheck.checked;
+    
+    // Validate
+    if (isNaN(R_io)) R_io = 0.12;
+    if (isNaN(Rin)) Rin = 0.5;
+    if (isNaN(Rout)) Rout = 1.2;
+    if (Rout <= Rin + 0.02) Rout = Rin + 0.05;
+    
+    // Update displays
+    document.getElementById('v-rio').innerText = R_io.toFixed(3);
+    document.getElementById('v-rin').innerText = Rin.toFixed(3);
+    document.getElementById('v-rout').innerText = Rout.toFixed(3);
+    document.getElementById('v-qb').innerText = Qb.toFixed(1);
+    document.getElementById('v-cin').innerText = Cin.toFixed(3);
+    document.getElementById('v-oat').innerText = oat.toFixed(2);
+    
+    // Calculate areas
+    let A_io = Math.PI * R_io * R_io;
+    let A_oi = Math.PI * (Rout * Rout - Rin * Rin);
+    let V_io = A_io * FIBER_LENGTH;
+    let V_oi = A_oi * FIBER_LENGTH;
+    
+    // Match volumes if checked
+    if (matchVolume && V_io > 0) {
+      const targetArea = V_io / FIBER_LENGTH;
+      const newRout = Math.sqrt(targetArea / Math.PI + Rin * Rin);
+      if (!isNaN(newRout) && newRout > Rin) {
+        Rout = newRout;
+        sRout.value = Rout.toFixed(3);
+        document.getElementById('v-rout').innerText = Rout.toFixed(3);
+        A_oi = Math.PI * (Rout * Rout - Rin * Rin);
+        V_oi = A_oi * FIBER_LENGTH;
       }
-      const rScaled = Math.min(R_mm * scale, 68);
-      const cx = 75, cy = 75;
-      const circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
-      circle.setAttribute("cx", cx);
-      circle.setAttribute("cy", cy);
-      circle.setAttribute("r", rScaled);
-      circle.setAttribute("fill", "#FFB3A7");
-      circle.setAttribute("stroke", "#b7410e");
-      circle.setAttribute("stroke-width", "1.2");
-      svgIo.appendChild(circle);
-      // add inner label / blood region
-      const text = document.createElementNS("http://www.w3.org/2000/svg","text");
-      text.setAttribute("x", cx);
-      text.setAttribute("y", cy+4);
-      text.setAttribute("text-anchor", "middle");
-      text.setAttribute("font-size", "11");
-      text.setAttribute("fill", "#5e2a1a");
-      text.textContent = "blood";
-      svgIo.appendChild(text);
-    }
-
-    function drawOutsideIn(Rin_mm, Rout_mm) {
-      svgOi.innerHTML = '';
-      const viewSize = 150;
-      let outerRadiusClipped = Math.min(Rout_mm, 2.2);
-      let scale = (viewSize * 0.38) / (outerRadiusClipped + 0.15);
-      if(scale > 42) scale = 42;
-      if(scale < 14) scale = 14;
-      const rOutScaled = Rout_mm * scale;
-      const rInScaled = Rin_mm * scale;
-      const cx = 75, cy = 75;
-      const outerCircle = document.createElementNS("http://www.w3.org/2000/svg","circle");
-      outerCircle.setAttribute("cx", cx);
-      outerCircle.setAttribute("cy", cy);
-      outerCircle.setAttribute("r", rOutScaled);
-      outerCircle.setAttribute("fill", "#FFB3A7");
-      outerCircle.setAttribute("stroke", "#b7410e");
-      outerCircle.setAttribute("stroke-width", "1.2");
-      svgOi.appendChild(outerCircle);
-      const innerCircle = document.createElementNS("http://www.w3.org/2000/svg","circle");
-      innerCircle.setAttribute("cx", cx);
-      innerCircle.setAttribute("cy", cy);
-      innerCircle.setAttribute("r", Math.max(2, rInScaled));
-      innerCircle.setAttribute("fill", "#fef9ef");
-      innerCircle.setAttribute("stroke", "#9e5e3a");
-      innerCircle.setAttribute("stroke-width", "1");
-      svgOi.appendChild(innerCircle);
-      // annotation: blood region (annulus)
-      const bloodLabel = document.createElementNS("http://www.w3.org/2000/svg","text");
-      bloodLabel.setAttribute("x", cx+12);
-      bloodLabel.setAttribute("y", cy-12);
-      bloodLabel.setAttribute("font-size", "9");
-      bloodLabel.setAttribute("fill", "#7a3e1a");
-      bloodLabel.textContent = "blood (annulus)";
-      svgOi.appendChild(bloodLabel);
-      const lumenLabel = document.createElementNS("http://www.w3.org/2000/svg","text");
-      lumenLabel.setAttribute("x", cx);
-      lumenLabel.setAttribute("y", cy+4);
-      lumenLabel.setAttribute("text-anchor", "middle");
-      lumenLabel.setAttribute("font-size", "9");
-      lumenLabel.setAttribute("fill", "#5e2e1a");
-      lumenLabel.textContent = "lumen";
-      svgOi.appendChild(lumenLabel);
-    }
-
-    function update() {
-      let R_io = parseFloat(sRio.value);
-      let Rin = parseFloat(sRin.value);
-      let Rout = parseFloat(sRout.value);
-      let Qb = parseFloat(sQb.value);        // mL/h
-      let Cin = parseFloat(sCin.value);
-      let oatFactor = parseFloat(sOat.value);
-      
-      // sanitize radii
-      if (R_io <= 0.01) R_io = 0.05;
-      if (Rin <= 0.05) Rin = 0.2;
-      if (Rout <= Rin + 0.02) Rout = Rin + 0.05;
-      
-      // Update displayed values
-      vRioSpan.innerText = R_io.toFixed(3);
-      vRinSpan.innerText = Rin.toFixed(3);
-      vRoutSpan.innerText = Rout.toFixed(3);
-      vQbSpan.innerText = Qb.toFixed(1);
-      vCinSpan.innerText = Cin.toFixed(3);
-      vOatSpan.innerText = oatFactor.toFixed(2);
-      
-      // Cross-section areas (mm²)
-      let A_io = Math.PI * R_io * R_io;
-      let A_oi = Math.PI * (Rout * Rout - Rin * Rin);
-      
-      // Volumes (mm³ -> µL: 1 mm³ = 1 µL)
-      let V_io = A_io * FIBER_LENGTH;
-      let V_oi = A_oi * FIBER_LENGTH;
-      
-      let matchVolume = matchVolCheck.checked;
-      let adjustedRout = Rout;
-      
-      if (matchVolume) {
-        // Force outside-in volume to equal inside-out volume
-        const targetVol = V_io;
-        const requiredArea = targetVol / FIBER_LENGTH;    // mm² required annular area
-        // A_ann = π(Rout² - Rin²) = requiredArea → Rout = sqrt(requiredArea/π + Rin²)
-        let newRout = Math.sqrt(requiredArea / Math.PI + Rin * Rin);
-        if (!isNaN(newRout) && isFinite(newRout)) {
-          adjustedRout = Math.min(Math.max(newRout, Rin + 0.03), 3.0);
-          Rout = adjustedRout;
-          // update slider without triggering infinite event loop
-          sRout.value = Rout.toFixed(3);
-          vRoutSpan.innerText = Rout.toFixed(3);
-          A_oi = Math.PI * (Rout * Rout - Rin * Rin);
-          V_oi = A_oi * FIBER_LENGTH;
-        }
-      }
-      
-      // update displayed areas & volumes
-      ioAreaSpan.innerText = A_io.toFixed(4);
-      oiAreaSpan.innerText = A_oi.toFixed(4);
-      ioVolSpan.innerText = V_io.toFixed(2);
-      oiVolSpan.innerText = V_oi.toFixed(2);
-      
-      // Residence time (hours) -> convert to minutes later
-      // Qb in mL/h, volume in µL = mm³ => volume in mL: V_mL = V_mm³ / 1000
-      const V_io_mL = V_io / 1000;
-      const V_oi_mL = V_oi / 1000;
-      let tau_io_hr = V_io_mL / Qb;      // hours
-      let tau_oi_hr = V_oi_mL / Qb;
-      if (!isFinite(tau_io_hr)) tau_io_hr = 0;
-      if (!isFinite(tau_oi_hr)) tau_oi_hr = 0;
-      const tau_io_min = tau_io_hr * 60;
-      const tau_oi_min = tau_oi_hr * 60;
-      ioTauSpan.innerText = tau_io_min.toFixed(2) + " min";
-      oiTauSpan.innerText = tau_oi_min.toFixed(2) + " min";
-      
-      // Membrane area (scales transporter sites)
-      const memArea_io = MEM_AREA_FACTOR;           // reference membrane area inside-out
-      let memArea_oi = memArea_io;
-      // outside-in effective membrane area proportional to annular surface area / inner lumen area (capped 3x)
-      let areaRatio = A_oi / A_io;
-      if (isNaN(areaRatio) || !isFinite(areaRatio)) areaRatio = 1;
-      let effectiveAreaFactor = Math.min(areaRatio, 3.0);
-      memArea_oi = memArea_io * effectiveAreaFactor;
-      
-      // Vmax scaled by activity factor and membrane area (per hour, per mm²)
-      const Vmax_io = BASE_Vmax * oatFactor * memArea_io;     // mmol/h
-      const Vmax_oi = BASE_Vmax * oatFactor * memArea_oi;
-      
-      // Michaelis-Menten flux (mmol/h)
-      let J_io = (Vmax_io * Cin) / (Km + Cin);
-      let J_oi = (Vmax_oi * Cin) / (Km + Cin);
-      
-      // Residence modulation: longer residence enhances effective clearance due to extended exposure.
-      // Using gentle logarithmic correction based on minutes residence (realistic scale)
-      let tau_io_mod = Math.max(0.02, tau_io_min);
-      let tau_oi_mod = Math.max(0.02, tau_oi_min);
-      let resFactor_io = 1 + 0.28 * Math.log(1 + tau_io_mod / 4.5);
-      let resFactor_oi = 1 + 0.22 * Math.log(1 + tau_oi_mod / 5.0);
-      if (!isFinite(resFactor_io)) resFactor_io = 1;
-      if (!isFinite(resFactor_oi)) resFactor_oi = 1;
-      
-      // Clearance (mL/min) approximate: J / Cin [mL/h] then convert to mL/min
-      let CL_io_mLperH = (J_io / Cin) * resFactor_io;   // mL/h  (since J_io mmol/h / Cin mmol/mL => mL/h)
-      let CL_oi_mLperH = (J_oi / Cin) * resFactor_oi;
-      let CL_io_mLmin = CL_io_mLperH / 60;
-      let CL_oi_mLmin = CL_oi_mLperH / 60;
-      
-      if (isNaN(CL_io_mLmin)) CL_io_mLmin = 0;
-      if (isNaN(CL_oi_mLmin)) CL_oi_mLmin = 0;
-      CL_io_mLmin = Math.max(0, CL_io_mLmin);
-      CL_oi_mLmin = Math.max(0, CL_oi_mLmin);
-      
-      ioClSpan.innerText = CL_io_mLmin.toFixed(5);
-      oiClSpan.innerText = CL_oi_mLmin.toFixed(5);
-      
-      const volRatio = V_oi / V_io;
-      volRatioSpan.innerText = volRatio.toFixed(2) + " ×";
-      
-      // verdict & fair comparison message
-      if (!matchVolume) {
-        verdictSpan.innerHTML = "⚠️ UNFAIR COMPARISON — volumes differ significantly. Enable 'Match blood volume' to compare equivalent matrix volumes.";
-        verdictSpan.style.background = "#fff1f0";
-        verdictSpan.style.borderLeft = "6px solid #dc2626";
-      } else {
-        verdictSpan.innerHTML = "✅ FAIR COMPARISON — volumes matched. Outside‑In geometry clearance accounts for annular membrane area & residence.";
-        verdictSpan.style.background = "#e6f7ec";
-        verdictSpan.style.borderLeft = "6px solid #16a34a";
-      }
-      
-      // draw schematics
-      drawInsideOut(R_io);
-      drawOutsideIn(Rin, Rout);
     }
     
-    // sync Rout slider when match volume is active but manual rout change can be overridden only if match volume is off? The logic: when matchVolume is checked, update routine recalc Rout based on Rin and targetVolume.
-    // Additionally, when unchecking, we preserve previous Rout slider value.
-    function onInput(event) {
-      if (!matchVolCheck.checked) {
-        // if match volume is unchecked, we allow free Rout changes.
-        let rinVal = parseFloat(sRin.value);
-        let routVal = parseFloat(sRout.value);
-        if (routVal <= rinVal + 0.02) {
-          sRout.value = (rinVal + 0.05).toFixed(3);
-        }
-      }
-      update();
+    // Update displays
+    document.getElementById('io-area').innerText = A_io.toFixed(4);
+    document.getElementById('oi-area').innerText = A_oi.toFixed(4);
+    document.getElementById('io-vol').innerText = V_io.toFixed(2);
+    document.getElementById('oi-vol').innerText = V_oi.toFixed(2);
+    
+    // Residence time
+    const tau_io_min = (V_io / 1000 / Qb) * 60;
+    const tau_oi_min = (V_oi / 1000 / Qb) * 60;
+    document.getElementById('io-tau').innerText = tau_io_min.toFixed(2) + ' min';
+    document.getElementById('oi-tau').innerText = tau_oi_min.toFixed(2) + ' min';
+    
+    // Clearance calculation
+    const areaRatio = Math.min(A_oi / A_io, 3);
+    const memArea_io = MEM_AREA_FACTOR;
+    const memArea_oi = MEM_AREA_FACTOR * areaRatio;
+    const Vmax_io = BASE_Vmax * oat * memArea_io;
+    const Vmax_oi = BASE_Vmax * oat * memArea_oi;
+    const J_io = (Vmax_io * Cin) / (Km + Cin);
+    const J_oi = (Vmax_oi * Cin) / (Km + Cin);
+    
+    const resFactor_io = 1 + 0.28 * Math.log(1 + tau_io_min / 4.5);
+    const resFactor_oi = 1 + 0.22 * Math.log(1 + tau_oi_min / 5.0);
+    
+    let CL_io = (J_io / Cin) / 60 * resFactor_io;
+    let CL_oi = (J_oi / Cin) / 60 * resFactor_oi;
+    if (isNaN(CL_io)) CL_io = 0;
+    if (isNaN(CL_oi)) CL_oi = 0;
+    
+    document.getElementById('io-cl').innerText = CL_io.toFixed(5);
+    document.getElementById('oi-cl').innerText = CL_oi.toFixed(5);
+    document.getElementById('vol-ratio').innerText = (V_oi / V_io).toFixed(2) + ' ×';
+    
+    const verdict = document.getElementById('verdict');
+    if (!matchVolume) {
+      verdict.innerHTML = '⚠️ Not a fair comparison (volume mismatch)';
+      verdict.style.background = '#fff1f0';
+    } else {
+      verdict.innerHTML = '✅ Fair comparison (matched volume)';
+      verdict.style.background = '#e6f7ec';
     }
     
-    function forceCheckUpdate() {
-      update();
-    }
-    
-    // attach listeners
-    sRio.addEventListener('input', onInput);
-    sRin.addEventListener('input', onInput);
-    sRout.addEventListener('input', function() {
-      if (!matchVolCheck.checked) {
-        let rin = parseFloat(sRin.value);
-        let rout = parseFloat(sRout.value);
-        if (rout <= rin + 0.02) sRout.value = (rin + 0.05).toFixed(3);
-        update();
-      } else {
-        update();
-      }
-    });
-    sQb.addEventListener('input', onInput);
-    sCin.addEventListener('input', onInput);
-    sOat.addEventListener('input', onInput);
-    matchVolCheck.addEventListener('change', function() {
-      if (matchVolCheck.checked) {
-        // re-equalize based on current R_io and Rin
-        update();
-      } else {
-        update();
-      }
-    });
-    
-    // initial draw
-    update();
-  })();
+    drawInsideOut(R_io);
+    drawOutsideIn(Rin, Rout);
+  }
+  
+  // Add event listeners
+  const inputs = [sRio, sRin, sRout, sQb, sCin, sOat, matchVolumeCheck];
+  inputs.forEach(input => {
+    if (input) input.addEventListener('input', update);
+  });
+  
+  update();
+})();
 </script>
 </body>
 </html>
